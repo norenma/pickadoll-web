@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pickadoll</title>
+  <meta http-equiv="Page-Enter" content="blendTrans(Duration=0.0)" />
+	<meta http-equiv="Page-Exit" content="blendTrans(Duration=0.0)" />
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <script src="/assets/underscore.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+  <script src="http://malsup.github.com/jquery.form.js"></script>
+  <script src="/assets/templateManager.js"></script>
+  
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<%= yield %>
+
+</body>
+</html>

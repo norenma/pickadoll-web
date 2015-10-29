@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tester_id: 1
+  questionnaire: MyString
+  question: MyString
+  device_id: MyString
+  answer_label: MyString
+  answer_value: MyString
+  answer_time: MyString
+  user: MyString
+
+two:
+  tester_id: 1
+  questionnaire: MyString
+  question: MyString
+  device_id: MyString
+  answer_label: MyString
+  answer_value: MyString
+  answer_time: MyString
+  user: MyString

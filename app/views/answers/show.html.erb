@@ -1,0 +1,42 @@
+<div class="page-header">
+	<p class="home-btn"><%= link_to image_tag("portal_menu_btn.png", :alt => "Home button"), questionnaires_path %></p>
+	<h1>Resultat för <%= @questionnaire.name %></h1>
+
+	<ul class="user-info-list">
+		<li><img src="../assets/user_male-32.png"> <%= @username %> </li>
+		<li><%= link_to "Logga ut", sessions_logout_path %></li>
+	</ul>
+</div>
+
+<% if flash[:alert] %>
+  <div class="alert"><%= flash[:alert] %></div>
+<% end %>
+
+<form action="generateCSV" method="post" id="answerForm">
+	<p>
+		<input type="submit" value="Hämta CSV" id="">
+	</p>
+<table >
+		<thead>
+			<tr>
+				<th class="centered"><input type="checkbox" name="checkAll" id="checkAllBox" checked></th>
+				<th>TestID</th>
+				<th class="centered">Antal Svar</th>
+				<th>Senaste svar</th>
+			</tr>
+		</thead>
+
+
+		<tbody id="answerTableBody">
+			<% @answers.each do |a| %>
+			<tr>
+				<td class="centered"><input type="checkbox" name="answer[]" value="<%= a.tester_id %>" checked></td>
+				<td> <%= a.tester_id %> </td>
+				<td class="centered"> <%= a.numberOfAnswers %> </td>
+				<td> <%= a.lastAnswer %> </td>
+			</tr>
+
+			<% end %>
+		</tbody>
+</table>
+</form>

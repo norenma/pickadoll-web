@@ -1,0 +1,21 @@
+<%= form_for ([@questionnaire]), remote: true, :html => {:multipart => true} do |f| %>
+	<p class="questionnaire-name">
+		<%= f.text_field :name %>
+	</p>
+	<p>
+		<%= f.label :description, 'Beskrivning ' %>
+		<%= f.text_area :description %>
+	</p>
+
+	<p>	
+		<label>Svarsalternativ för alla frågor</label> <br/>
+		<select name="setResponseOptionForAll" id="setResponseOptionForAll" data-questionnaireid="<%= @questionnaire.id %>">
+			<option value="nil">Välj ett alternativ för alla frågor</option>
+			<% @response_options.each do |option| %>
+				<option value="<%= option.id %>"><%= option.name %></option>
+			<% end %>
+		</select>
+
+		<input type="button" value="Redigera svarsalternativ" class="editRespOption" style="margin-top: -10px; ">
+	</p>
+<% end %>

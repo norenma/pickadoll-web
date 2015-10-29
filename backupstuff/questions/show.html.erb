@@ -1,0 +1,16 @@
+<%= stylesheet_link_tag "application.css" %>
+<h1><%= @question.name %></h1>
+
+<%= form_for :question, url: questions_path do |f|%>
+	<p>
+		<%= f.label :text %>
+		<%= f.text_area :text %>
+
+	</p>
+
+	<p>
+		<%= f.submit %>
+	</p>	
+<% end %>
+
+<p><%= link_to 'Tillbaka', questions_path %> </p>

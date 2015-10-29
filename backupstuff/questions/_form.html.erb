@@ -1,0 +1,44 @@
+<%= stylesheet_link_tag "application.css" %>
+	
+<!--, @question.media.build -->
+<%= form_for ([@question]), :html => {:multipart => true} do |f| %>
+	<p>
+		<%= f.label :name %>
+		<%= f.text_field :name %>
+	</p>
+
+	<p>
+		<%= f.label :text %>
+		<%= f.text_area :text %>
+	</p>
+	
+	<%= fields_for :media_files  do |m| %>
+	<p>
+		<%= file_field_tag 'image_file' %>
+		<!--<%= m.label :media_type %>
+		<%= m.text_field :media_type %>-->
+	</p>
+
+	<p>
+		<%= m.label :media_type %>
+		<%= m.text_field :media_type %>
+	</p>
+
+	<p>
+		<%= m.label :ref %>
+		<%= m.text_field :ref %>
+	</p>
+
+	<p>
+		<% if @media_files.ref %>
+			<img src="/uploads/<%= @media_files.ref%>" >
+		<% end %>
+	</p>
+
+	<% end %>
+
+	<p>
+		<%= submit_tag("Spara") %>
+	</p>
+<% end %>
+

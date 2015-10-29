@@ -1,0 +1,22 @@
+<% @page_title = "Pickadoll | Skapa konto" %>
+<%= stylesheet_link_tag "application.css" %>
+
+<h1>Nytt konto</h1>
+
+<%= form_for(:user, :url => {:controller => 'users', :action => 'create'}) do |f| %>
+<p>Användarnamn: <br/> <%= f.text_field :username %> </p>
+<p>Email: <br/> <%= f.text_field :email %> </p>
+<p>Lösenord: <br/> <%= f.password_field :password %> </p>
+
+<%= f.submit :Signup %> 
+
+<% end %>
+
+<% if @user.errors.any? %>
+	<ul class="Signup_Errors">
+    <% for message_error in @user.errors.full_messages %>
+      <li>* <%= message_error %></li>
+    <% end %>
+    </ul>
+<% end %>
+

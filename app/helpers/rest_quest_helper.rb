@@ -1,0 +1,2 @@
+module RestQuestHelper
+end

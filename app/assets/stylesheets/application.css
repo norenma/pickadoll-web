@@ -1,0 +1,210 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+* {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+body {
+	font-family: 'Helvetica Neue', 'Helvetica', 'Verdana', sans-serif;
+	background: #eee;
+}
+
+p, li {
+	font-size: .9em;
+	/*line-height: 1.25em;*/
+}
+
+ul {
+	list-style: square;
+	list-style-position: inside;
+	margin: 0;
+}
+
+li {
+}
+
+p > a, li > a, td > a {
+	/*8cc3f6*/
+	color: #0fcaaa;
+	text-decoration: underline;
+}
+
+p > a:hover, li > a:hover, td > a:hover {
+	text-decoration: none;
+}
+
+a > img {
+	pointer-events: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 300;
+	color: #333;
+}
+/*Page header settings */
+.page-header {
+	line-height: 3em;
+	background-color: #f8f8f8;
+	position: relative;
+	border-bottom: 1px solid #ddd;
+}
+
+.page-header p, .page-header h1 {
+	display: inline-block;
+	min-width: 20px;
+	line-height: 1em;
+}
+
+.user-info-list {
+	display: inline-block;
+	position: absolute;
+	top: 0px; right: 0px;
+	background-color: #f8f8f8;
+	min-width: 170px;
+	height: 3em;
+	overflow: hidden;
+	transition: all 0.1s ease-out;
+	-webkit-transition: all 0.1s ease-out;
+	padding: 0 .75em 0 .75em;
+	z-index: 40;
+}
+
+.user-info-list img {
+	display: inline-block;
+	max-height: 24px;
+	position: relative;
+	line-height: 3em;
+	top: 5px;
+}
+
+.user-info-list:hover {
+	height: 6em;
+	box-shadow: 0px 0px 5px #bbb;
+}
+
+.user-info-list li {
+	border-bottom: 1px solid #dedede;
+}
+
+.user-info-list li a {
+	display: block;
+}
+
+/*End of page-header CSS*/
+
+
+.header {
+	background-color: #f8f8f8;
+}
+
+h1:hover {
+
+}
+
+.questionnaire-name input[type="text"] {
+	font-size: 2em;
+	background-color: #f8f8f8;
+	border: 1px solid #f8f8f8;
+}
+
+.questionnaire-name input[type="text"]:hover {
+	font-size: 2em;
+	cursor: text;
+	border: 1px dashed #ddd;
+	background-color: #fcfcfc;
+}
+
+form p {
+}
+
+label {
+	text-align: right;
+	min-width: 75px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+input[type="text"], textarea {
+	display: inline-block;
+	min-width: 125px;
+	padding: .25em;
+	border: 1px solid #ddd;
+	font-size: 1.0em;
+	outline: none;
+	-webkit-transition: all ease-out .2s;
+	background: #fefefe;
+	color: #444;
+}
+
+input[type="text"]:focus, textarea:focus {
+	/*border: 1px solid #0fcaaa;*/
+	/*box-shadow: 0px 0px 5px #0fcaaa;*/
+	background: #ffffff;
+}
+
+.home-btn a {
+		display: inline-block;
+		position: relative;
+		width: 50px;
+		line-height: 50px;
+		background-color: #0fcaaa;
+		color: #fefefe;
+		text-decoration: none;
+		font-size: 24px;
+		margin: 0;
+}
+
+.home-btn a img {
+	width: 50%;
+	height: auto;
+	position: relative;
+	display: inline-block;
+	margin: 12px 0 0 11px; Q
+}
+
+.home-btn a:hover {
+	opacity: 0.7;
+}
+
+table {
+	border-collapse: collapse;
+	font-size: .9em;
+	width: 100%;
+}
+
+tr {
+	border-bottom: 1px solid #ddd;
+	background: #f7f7f7;
+}
+
+th {
+	font-weight: 300;
+	padding: .5em !important;
+	background-color: #e8e8e8;
+}
+
+th, td {
+	text-align: left;
+	padding: .5em;
+	vertical-align: middle;
+}
+
+.centered {
+	text-align: center;
+}

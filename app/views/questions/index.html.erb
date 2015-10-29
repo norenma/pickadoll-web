@@ -1,0 +1,26 @@
+<%= stylesheet_link_tag "application.css" %>
+<h1>Frågor</h1>
+<p><%= link_to 'Ny fråga', new_question_path %></p>
+
+<table>
+	<tr>
+		<th>ID</th>
+		<th>Namn</th>
+		<th>Fråga</th>
+		<th>Alternativ</th>
+	</tr>
+
+	<% @questions.each do |q| %>
+		<tr>
+			<td> <%= q.id %> </td>
+			<td> <%= q.name %> </td>
+			<td> <%= q.text %> </td>
+			<td> <%= link_to 'Edit', edit_question_path(q) %> | 
+				<%= link_to 'Radera', question_path(q), method: :delete, data: {
+					confirm: 'Är du säker på att du vill radera frågan?'
+				} %>
+			</a> </td>
+		</tr>
+	<% end %>
+</table>
+

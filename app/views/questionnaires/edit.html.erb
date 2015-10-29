@@ -1,0 +1,19 @@
+<% @page_title = "Pickadoll | Enkäter" %>
+<%= stylesheet_link_tag "application.css" %>
+
+<div id="quest-header" class="page-header">
+	<p class="home-btn"><%= link_to image_tag("portal_menu_btn.png", :alt => "Home button"), questionnaires_path %></p>
+	<%= render 'headerform' %>
+
+	<ul class="user-info-list">
+		<li><img src="/assets/user_male-32.png"> <%= @username %> </li>
+		<li><%= link_to "Logga ut", sessions_logout_path %></li>
+	</ul>
+
+</div>
+
+<div id="quest-content">
+
+	<%= render 'questform' %>
+
+</div>

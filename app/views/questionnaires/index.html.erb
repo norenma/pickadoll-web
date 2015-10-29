@@ -1,0 +1,45 @@
+<% @page_title = "Pickadoll | Enkäter" %>
+<%= stylesheet_link_tag "application.css" %>
+
+<div class="page-header">
+	<h1>Enkäter</h1>
+
+	<ul class="user-info-list">
+		<li><img src="assets/user_male-32.png"> <%= @username %> </li>
+		<li><%= link_to "Logga ut", sessions_logout_path %></li>
+	</ul>
+</div>
+
+<!--<%= @questionnaires.inspect %>-->
+
+<table>
+	<thead>
+		<tr>
+			<th>Enkätnamn</th>
+			<th>Beskrivning</th>
+			<th>Ägare</th>
+			<th>Svar</th>
+			<th>Skapad</th>
+			<th>Alternativ</th>
+		</tr>
+	</thead>	
+	<!-- Info about the questionnaires -->
+	<tbody>
+		<% @questionnaireData.each do |q| %> 
+			<tr>
+				<td><%= link_to q['name'], edit_questionnaire_path(q['id']) %></td>
+				<td><%= q['description'] %></td>
+				<td><%= q['owner'][0] %></td>
+				<td><%= link_to q['numberOfAnswers'][0]['numberOfAnswers'], answer_path(q['id']) %> </td>
+				<td><%= q['created_at'] %></td>
+				<td> 
+					<%= link_to 'Radera', questionnaire_path(q['id']), method: :delete, data: {
+					confirm: 'Är du säker på att du vill radera enkäten? Detta kan inte ångras.'
+				} %></td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<p><%= link_to 'Skapa ny enkät', new_questionnaire_path %></p>
+

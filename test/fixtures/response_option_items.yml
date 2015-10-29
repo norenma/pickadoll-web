@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  value: 1
+  label: MyText
+  audio: MyText
+  response_option_id: 
+
+two:
+  value: 1
+  label: MyText
+  audio: MyText
+  response_option_id: 
