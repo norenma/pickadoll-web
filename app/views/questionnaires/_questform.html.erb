@@ -318,20 +318,23 @@
 				<label>Svarsalternativ</label>
 			</p>
 
-			<form accept-charset="UTF-8" action="/questionnaires/[%= questid%]/categories/[%= category_id %]/questions/[%= id %]" class="edit_question" data-remote="true" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
-				<div style="display:none">
-					<input name="utf8" type="hidden" value="✓">
-					<input name="_method" type="hidden" value="patch">
-				</div>
+			<div class="questionOptionsForm">
+				<form accept-charset="UTF-8" action="/questionnaires/[%= questid%]/categories/[%= category_id %]/questions/[%= id %]" class="edit_question" data-remote="true" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
+					<div style="display:none">
+						<input name="utf8" type="hidden" value="✓">
+						<input name="_method" type="hidden" value="patch">
+					</div>
 
 
-				<select class="response_option_select" id="question_response_id" name="question[response_id]">
-					[% _.each(response_options, function (option) { %]
-						<option value="[%= option.id %]">[%= option.name %]</option>
-					[% }); %]
-				</select>
+					<select class="response_option_select" id="question_response_id" name="question[response_id]">
+						[% _.each(response_options, function (option) { %]
+							<option value="[%= option.id %]">[%= option.name %]</option>
+						[% }); %]
+					</select>
 
-				<input name="commit" type="submit" value="Spara">
+					<!-- <input name="commit" type="submit" value="Spara"> -->
+				</form>
+
 				<p></p>
 				<div class="responseOptions">
 					<ul>
@@ -340,11 +343,11 @@
 				<p>
 					<input type="button" value="Redigera svarsalternativ" class="editRespOption">
 				</p>
-			</form>
+			</div>
 
-			<p>
+			<!-- <p>
 				<input type="button" value="Nytt svarsalternativ" id="newRespOption">
-			</p>
+			</p> -->
 		</div>
 	</li>
 </script>
@@ -389,7 +392,7 @@
 		<p>
 			<input type="button" class="deleteResponseOptionSet" value="Radera" >
 			<input type="button" class="addRespOption" value="Lägg till alternativ" >
-			<input type="submit" value="Spara" >
+			<!-- <input type="submit" value="Spara" > -->
 		</p>
 	</form>
 </script>

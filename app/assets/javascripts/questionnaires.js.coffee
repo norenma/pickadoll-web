@@ -20,6 +20,7 @@ window.addNewQuestionToCategory = addNewQuestionToCategory = (e) ->
 
 #Method for finding an elements form parent
 window.findFormParent = findFormParent = (el) ->
+	console.log "finding form parent for element of type " + $(el).prop("tagName")
 	parent = null
 
 	checkIfForm = (el) ->
@@ -36,6 +37,7 @@ window.findFormParent = findFormParent = (el) ->
 
 #Method for handling changes on input elements, some sort of auto-save function
 window.handleChangeOnInput = handleChangeOnInput = (e) ->
+	console.log "Handling change on input"
 	handleStop = (target) ->
 		console.log "Done"
 		form = findFormParent target
@@ -172,8 +174,8 @@ window.handleCatDelete = handleCatDelete = (e) ->
 #end of categoryDelete
 
 #responseOptionSelected
-responseOptionSelected = (e) ->
-	console.log e.target.parentNode
+window.responseOptionSelected = responseOptionSelected = (e) ->
+	console.log "Selected response option" + e.target.parentNode
 	$(e.target).parent().ajaxSubmit
 		beforeSubmit: (a, f, o) ->
 			o.dataType = 'json'
@@ -400,14 +402,15 @@ questionnaireInit = (e) ->
 		$('#editRespOptForm').css 'display', 'none'
 
 	#Listener for the change-events on the input elements
-	$('input, textarea').on 'keyup', handleChangeOnInput
+	$('form input, form textarea').on 'keyup', handleChangeOnInput
+
+	$('.newResponseOptionSet').on 'click', addNewResponseOptionSet
 
 	loadResponseOptionMenu()
 	#setup underscore settings
 	setupUSSettings()
-
-	$('.newResponseOptionSet').on("click", addNewResponseOptionSet);
 #End of ready method
+
 $(document).on("ready", questionnaireInit )
 $(document).on("page:load", questionnaireInit )
 

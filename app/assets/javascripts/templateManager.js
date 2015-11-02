@@ -5,21 +5,48 @@ function setupUSSettings() {
 	};
 }
 
+// Makes sure all of the listeners are set (once and only once)
+function setListeners() {
+	$('form input, form textarea').off().on('keyup', handleChangeOnInput);
+
+	// In question view
+	$('.edit-btn').off().on("click", window.handleEditBtn);
+	$('.delete-btn').off().on("click", window.handleDeleteBtn);
+
+	$('.imgUploadForm input').off().on("change", window.uploadQuestImg);
+	$('.audioUploadForm input').off().on("change", window.uploadQuestAudio);
+
+	$('.addQuestionToCategory').off().on('click', window.addNewQuestionToCategory);
+	$('.catImgUploadForm').off().on('change', window.categoryImageUpload);
+	$('.catAudioUploadForm').off().on('change', window.categoryAudioUpload);
+
+	$('.editRespOption').off().on("click", function (e) {
+		e.preventDefault();
+		$('#editRespOptForm').css('display', 'block');
+	});
+
+	// In response option view
+	$('.response_option_select').off().on('change', responseOptionSelected);
+	$('.addRespOption').off().on("click", addResponseOption);
+	$('.delete a').off().on("click", handleDeleteResposeOption);
+
+	$('.newResponseOptionSet').off().on("click", addNewResponseOptionSet);
+	$('.deleteResponseOptionSet').off().on('click', deleteResponseOptionSet);
+}
+
 function loadNewQuestionTemplate (button, questData, cid) {
+	console.log("Loading new question template");
 	var htmlTmp = $('#newQuestionFormTemp').html()
 	var data = questData;
 	$(button).parent().parent().before(_.template(htmlTmp, data));
 
-	//Load the listeners required for the question form
-	$('.edit-btn').off().on("click", window.handleEditBtn);
-	$('.delete-btn').off().on("click", window.handleDeleteBtn)
-	$('input, textarea').off().on('keyup', handleChangeOnInput);
-	$('.imgUploadForm input').off().on("change", window.uploadQuestImg);
-	$('.audioUploadForm input').off().on("change", window.uploadQuestAudio);
+	// Load the listeners required for the question form
+	setListeners();
 }
 
 
 function loadEditResponseOptionsTemplate (responseOptionData) {
+	console.log("Loading edit response options template");
 	var htmlTmp = $('#editResponseOptionsForm').html()
 	//console.log(responseOptionData);
 	var data = {
@@ -38,11 +65,9 @@ function loadEditResponseOptionsTemplate (responseOptionData) {
 		});
 		return false;
 	});
+
 	//Add listener for the addResponse button
-	$('.addRespOption').off().on("click", addResponseOption);
-	$('.delete a').off().on("click", handleDeleteResposeOption);
-	$('input, textarea').off().on('keyup', handleChangeOnInput);
-	$('.deleteResponseOptionSet').off().on('click', deleteResponseOptionSet);
+	setListeners();
 }
 
 function loadNewCategoryTemplate(data) {
@@ -71,16 +96,12 @@ function loadNewCategoryTemplate(data) {
 		stop: window.categoryDropped
 	});
 
-	//Add relevant listeners for the new category
-	$('.edit-btn').off().on("click", window.handleEditBtn);
-	$('.delete-cat-btn').off().on("click", window.handleCatDelete);
-	$('.addQuestionToCategory').off().on('click', window.addNewQuestionToCategory)
-	$('.catImgUploadForm').off().on('change', window.categoryImageUpload)
-	$('.catAudioUploadForm').off().on('change', window.categoryAudioUpload)
-	$('input, textarea').off().on('keyup', handleChangeOnInput);
+	// Add relevant listeners for the new category
+	setListeners();
 }
 
 function addResponseOption (e) {
+	console.log("Adding new response option");
 	var responseOptionId = $('.response_option_id').val();
 	var htmlTmp = $('#newResponseOptionTemp').html();
 	var derp = e.target;
@@ -92,11 +113,15 @@ function addResponseOption (e) {
 			console.log(data);
 			console.log(e.target);
 			$('#editResponseOptionTBody').append(_.template(htmlTmp, {'id' : data.id }))
+
+			// Add relevant listeners for the new row
+			setListeners();
 		}
 	});
 }
 
 function addNewResponseOptionSet (e) {
+	console.log("Adding new response option set");
 	$.ajax({
 		type: 'GET',
 		url: '/response_options/new/',
