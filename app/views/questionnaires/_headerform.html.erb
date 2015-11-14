@@ -7,7 +7,7 @@
 		<%= f.text_area :description %>
 	</p>
 
-	<p>	
+	<p>
 		<label>Svarsalternativ för alla frågor</label> <br/>
 		<select name="setResponseOptionForAll" id="setResponseOptionForAll" data-questionnaireid="<%= @questionnaire.id %>">
 			<option value="nil">Välj ett alternativ för alla frågor</option>
@@ -16,6 +16,6 @@
 			<% end %>
 		</select>
 
-		<input type="button" value="Redigera svarsalternativ" class="editRespOption" style="margin-top: -10px; ">
+		<input type="button" value="Redigera svarsalternativ" class="editRespAllOption" style="margin-top: -10px; ">
 	</p>
 <% end %>

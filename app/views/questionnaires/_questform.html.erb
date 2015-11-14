@@ -362,7 +362,7 @@
 			<p>
 				<input class="responseOptionName" type="text" name="response_option_name" value="[%= name %]" >
 				<div class="responseOptionAvailability">
-					<input type="checkbox" name="response_option_availability" value="[%= id %]">
+					<input type="checkbox" name="response_option_availability" [%= availability ? 'checked' : '' %]>
 					<p>Gör denna uppsättning tillgänglig för andra frågor</p>
 				</div>
 			</p>
@@ -379,10 +379,13 @@
 			<tbody id="editResponseOptionTBody">
 			[% _.each(options, function (opt) { %]
 				<tr class="respOptInput">
-					<input type="hidden" value="[%=opt.id %]" name="respValItemId[]">
+					<input type="hidden" value="[%= opt.id %]" name="respValItemId[]">
 					<td><input type="text" value="[%= opt.value %]" name="respVal[]" class="small" onKeyPress="return numbersonly(this, event)"></td>
-					<td><input type="text" value="[%=opt.label %]" name="respLbl[]" ></td>
-					<td><input type="file" name="respAudio[]" ></td>
+					<td><input type="text" value="[%= opt.label %]" name="respLbl[]" ></td>
+					<td>
+						<input type="file" name="respAudio[]" >
+						<div class="respOptAudio" style="display: inline;"></div>
+					</td>
 					<td ><a href="#" data-item-id="[%= opt.id %]">Radera</a></td>
 				</tr>
 			[% }); %]
@@ -403,7 +406,10 @@
 		<input type="hidden" name="respValItemId[]" value="[%=id %]" > </td>
 		<td><input type="text" placeholder="Värde" name="respVal[]" class="small" > </td>
 		<td><input type="text" placeholder="Svarstext" name="respLbl[]" > </td>
-		<td><input type="file" name="respAudio[]" > </td>
+		<td>
+			<input type="file" name="respAudio[]" >
+			<div class="respOptAudio" style="display: inline;"></div>
+		</td>
 		<td></td>
 	</tr>
 </script>

@@ -1,6 +1,9 @@
 #Awful global variable to keep check on the input things
 window.stoppedInput = null
 
+#Another awful global variable to keep track of option alternative view's state
+window.showingForQuestion = null
+
 #method for adding a new question to a category
 #adds the question to the database via the API then
 #adds the required HTML in the category
@@ -35,6 +38,22 @@ window.findFormParent = findFormParent = (el) ->
 	return form
 #end of finding form
 
+#Function for adding audio players for each response option in the edit view
+window.updateResponseOptionAudio = updateResponseOptionAudio = (e) ->
+	$('#edit_response_option :file').each (e) ->
+	  optId = $(@parentNode.parentNode).children(':hidden').val()
+	  console.log 'Noticed change in response option ' + optId
+	  activeOption = this
+	  $.ajax
+	    'url': '/response_options/getAudioById/' + optId
+	    'success': (data) ->
+	      console.log data
+	      $(activeOption).siblings('.respOptAudio').html ''
+	      $(activeOption).siblings('.respOptAudio').append '<audio controls="controls" src="/uploads/' + data.ref + '"></audio>'
+	      return
+	  return
+#end of updateResponseOptionAudio
+
 #Method for handling changes on input elements, some sort of auto-save function
 window.handleChangeOnInput = handleChangeOnInput = (e) ->
 	console.log "Handling change on input"
@@ -47,6 +66,7 @@ window.handleChangeOnInput = handleChangeOnInput = (e) ->
 				o.dataType = 'json'
 			complete: (x, t) ->
 				console.log "Saved"
+				updateResponseOptionAudio e
 	if stoppedInput
 		clearTimeout window.stoppedInput
 
@@ -113,6 +133,10 @@ window.handleEditBtn = handleEditBtn = (e) ->
 			checkEditableTag t.parentNode
 		#end of the if-statement
 	#end of the method
+
+	# Update response option menu
+	window.showingForQuestion = $(this).parent().parent().parent().parent().attr 'data-questionid'
+	window.loadResponseOptionMenu()
 
 	validElement = checkEditableTag e.target
 
@@ -210,13 +234,18 @@ window.loadResponseOptionMenu = loadResponseOptionMenu = () ->
 			$('#respOptionsEditDropdown').html('<option ="0">Välj svarsalternativ</option>')
 			for opt in res
 				do (opt) ->
-					#console.log opt
-					$('#respOptionsEditDropdown').append '<option value="' + opt.id + '">' + opt.name + '</option>'
+					# console.log opt
+					# console.log "Checking id " + window.showingForQuestion + ", owner " + opt.owned_by_question + " and availability " + opt.availability
+					if window.showingForQuestion && (window.showingForQuestion == "#{opt.owned_by_question}" || opt.availability) # Show only the question's set
+						$('#respOptionsEditDropdown').append '<option value="' + opt.id + '">' + opt.name + '</option>'
+					else if !window.showingForQuestion # Show everything
+						$('#respOptionsEditDropdown').append '<option value="' + opt.id + '">' + opt.name + '</option>'
 			#end of for
 	})
 
-	$('#respOptionsEditDropdown').on 'change', loadResponseOptionEdit
+	$('#respOptionsEditDropdown').off().on 'change', loadResponseOptionEdit
 #end
+
 
 #Method for handling dropped question-bar
 window.dropped = dropped = (e, ui) ->
@@ -286,6 +315,11 @@ window.responseOptionForAllSelected = responseOptionForAllSelected = (e) ->
 
 #end of setResponseOptionForAll
 
+# Function for updating the response option selector in a question
+window.updateResponseOptionSelector = updateResponseOptionSelector = (e) ->
+	console.log e
+
+
 #Function to call when the page is loaded
 questionnaireInit = (e) ->
 	$('form').on("submit", (e) ->
@@ -339,8 +373,6 @@ questionnaireInit = (e) ->
 			#end of the complete function
 	#end of the uploadQuestImg
 
-	$('.imgUploadForm input').on "change", uploadQuestImg
-
 	#code for handling the audio upload
 	window.uploadQuestAudio = uploadQuestAudio = (e) ->
 		activeQuest = this
@@ -359,6 +391,7 @@ questionnaireInit = (e) ->
 				#end of if-statement
 	#end of the upload function
 
+	$('.imgUploadForm input').on "change", uploadQuestImg
 	$('.audioUploadForm input').on "change", uploadQuestAudio
 
 	#make the categories sortable
@@ -386,6 +419,16 @@ questionnaireInit = (e) ->
 
 	$('.editRespOption').on("click", (e) ->
 		e.preventDefault()
+		$('#editRespOptForm').css 'display', 'block'
+	)
+
+	$('.editRespAllOption').on("click", (e) ->
+		e.preventDefault()
+
+		# Update response option menu
+		window.showingForQuestion = null
+		window.loadResponseOptionMenu()
+
 		$('#editRespOptForm').css 'display', 'block'
 	)
 

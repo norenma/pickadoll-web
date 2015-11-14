@@ -308,6 +308,12 @@ body {
 	min-height: 100%;
 	background: rgba(0, 0, 0, 0.6);
 	z-index: 499;
+
+	.respOptAudio {
+		audio {
+			margin: auto;
+		}
+	}
 }
 
 #editRespContent {

@@ -8,6 +8,8 @@ function setupUSSettings() {
 // Makes sure all of the listeners are set (once and only once)
 function setListeners() {
 	$('form input, form textarea').off().on('keyup', handleChangeOnInput);
+	$('#edit_response_option :file').off().on('change', handleChangeOnInput);
+	$('.responseOptionAvailability :checkbox').off().on('change', handleChangeOnInput);
 
 	// In question view
 	$('.edit-btn').off().on("click", window.handleEditBtn);
@@ -22,6 +24,16 @@ function setListeners() {
 
 	$('.editRespOption').off().on("click", function (e) {
 		e.preventDefault();
+		$('#editRespOptForm').css('display', 'block');
+	});
+
+	$('.editRespAllOption').off().on("click", function (e) {
+		e.preventDefault();
+
+		// Update response option menu
+		window.showingForQuestion = null;
+		window.loadResponseOptionMenu();
+
 		$('#editRespOptForm').css('display', 'block');
 	});
 
@@ -48,9 +60,10 @@ function loadNewQuestionTemplate (button, questData, cid) {
 function loadEditResponseOptionsTemplate (responseOptionData) {
 	console.log("Loading edit response options template");
 	var htmlTmp = $('#editResponseOptionsForm').html()
-	//console.log(responseOptionData);
+	console.log(responseOptionData);
 	var data = {
 		'name' : responseOptionData.name,
+		'availability' : responseOptionData.availability,
 		'options' : JSON.parse(responseOptionData.options),
 		'id' : responseOptionData.id
 	};
@@ -68,6 +81,24 @@ function loadEditResponseOptionsTemplate (responseOptionData) {
 
 	//Add listener for the addResponse button
 	setListeners();
+
+	// Add audio players to response options
+	window.updateResponseOptionAudio();
+
+	// $('#edit_response_option :file').on('change', function (e) {
+	// 	optId = $(e.target.parentNode.parentNode).children(':hidden').val();
+	// 	console.log("Noticed change in response option " + optId);
+	// 	activeOption = this;
+	//
+	// 	$.ajax({
+	// 		'url' : '/response_options/getAudioById/' + optId,
+	// 		'success' : function (data) {
+	// 			console.log(data);
+	// 			$(activeOption).siblings('.respOptAudio').html("");
+	// 			$(activeOption).siblings('.respOptAudio').append('<audio controls="controls" src="/uploads/' + data.ref + '"></audio>');
+	// 		}
+	// 	});
+	// });
 }
 
 function loadNewCategoryTemplate(data) {
@@ -123,10 +154,11 @@ function addResponseOption (e) {
 function addNewResponseOptionSet (e) {
 	console.log("Adding new response option set");
 	$.ajax({
-		type: 'GET',
-		url: '/response_options/new/',
+		type: 'POST',
+		url: '/response_options',
+		data: {question_id : window.showingForQuestion},
 		success: function (data) {
-			console.log(data);
+			// console.log(data);
 			loadResponseOptionMenu();
 			$.ajax({
 				'url' : '/response_options/getById/' + data.id,

@@ -9,34 +9,43 @@ class ResponseOptionsController < ApplicationController
 
 	def new
 		#ResponseOption.new
-		responseoption = ResponseOption.new
-		responseoption.name = "Ny uppsättning"
+		response_option = ResponseOption.new
+		response_option.name = "Ny uppsättning"
+		response_option.availability = false
 
-		responseoption.save
+		response_option.save
 
-
-		render json: {'status' => 'created', 'id' => responseoption.id}
+		render json: {'status' => 'created', 'id' => response_option.id}
 	end
 
 	def create
-		#the JSON that will be stored for the response option
-		respJSON = []
+		response_option = ResponseOption.new
+		response_option.name = "Ny uppsättning"
+		response_option.availability = false
+		response_option.owned_by_question = params[:question_id]
 
-		respVals = params[:respVal]
-		respLbl = params[:respLbl]
-		respVals.zip(respLbl) do |v, l|
-			obj = {
-				'val' => v,
-				'label' => l
-			}
-			respJSON.push(obj)
-		end
+		response_option.save
 
-		@res = ResponseOption.new(resp_params)
-		@res.options = respJSON.to_json
-		@res.save
+		render json: {'status' => 'created', 'id' => response_option.id}
 
-		render plain: respJSON.inspect
+		# #the JSON that will be stored for the response option
+		# respJSON = []
+		#
+		# respVals = params[:respVal]
+		# respLbl = params[:respLbl]
+		# respVals.zip(respLbl) do |v, l|
+		# 	obj = {
+		# 		'val' => v,
+		# 		'label' => l
+		# 	}
+		# 	respJSON.push(obj)
+		# end
+		#
+		# @res = ResponseOption.new(resp_params)
+		# @res.options = respJSON.to_json
+		# @res.save
+		#
+		# render plain: respJSON.inspect
 	end
 
 	#Main method for editing response options
@@ -45,6 +54,7 @@ class ResponseOptionsController < ApplicationController
 
 		setId = params[:response_option_id]
 		setName = params[:response_option_name]
+		setAvailability = params[:response_option_availability] ? true : false
 		respVals = params[:respVal]
 		respLbl = params[:respLbl]
 		respAudio = params[:respAudio]
@@ -52,12 +62,13 @@ class ResponseOptionsController < ApplicationController
 
 		respOptionSet = ResponseOption.find(setId)
 		respOptionSet.name = setName
+		respOptionSet.availability = setAvailability
 
 		respOptionSet.save
 
 		#When the set is saved move on to the rest stuff
 		i = 0
-		len = respVals.length
+		len = respVals ? respVals.length : 0
 		#testArr = []
 		while (i < len) do
 			id = itemIDs[i]
@@ -140,10 +151,21 @@ class ResponseOptionsController < ApplicationController
 		@responseData = {
 			'id' => @respData.id,
 			'name' => @respData.name,
+			'availability' => @respData.availability,
+			'owned_by_question' => @respData.owned_by_question,
 			'options' => @options.to_json
 		};
 
 		render json: @responseData
+	end
+
+	def getAudioById
+		id = params[:id]
+
+		option = ResponseOptionItem.find(id)
+		audio_file = option.audio ? MediaFile.find(option.audio) : ''
+
+		render json: audio_file
 	end
 
 	def addResponseOptionItem
@@ -170,6 +192,6 @@ class ResponseOptionsController < ApplicationController
 	private
 		#definierar vilka parametrar som är tillåtna för response_option
 		def resp_params
-			params.require(:response_option).permit(:name, :opts, :respVal, :respLbl)
+			params.require(:response_option).permit(:name, :availability, :owned_by_question, :opts, :respVal, :respLbl)
 		end
 end
