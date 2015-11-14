@@ -4,26 +4,26 @@ class SessionsController < ApplicationController
 
   end
 
-  #def for the auth method 
-  def login_attempt 
+  #def for the auth method
+  def login_attempt
   	authorized_user = User.authenticate(params[:username_or_email],params[:login_password])
 
   	if authorized_user
   		session[:user_id] = authorized_user.id
-      	flash[:notice] = "Wow Welcome again, you logged in as #{authorized_user.username}"
+      	flash[:notice] = "Welcome again, you logged in as #{authorized_user.username}"
       	#redirect_to(:action => 'home')
       	redirect_to(:controller => 'questionnaires', :action => 'index')
     else
       	flash[:notice] = "Invalid Username or Password"
       	flash[:color]= "invalid"
-      	render "login"	
+      	render "login"
     end
 
   	#redirect_to(:controller => 'sessions', :action => 'home')
-    #return false 
-  end 
+    #return false
+  end
 
-  #logout 
+  #logout
   def logout
   	session[:user_id] = nil
   	flash[:notice] = ''
@@ -31,12 +31,12 @@ class SessionsController < ApplicationController
   end
 
   def home
-  	
+
   end
 
-  def show 
-    @questionnaires = Questionnaire.all 
-  end 
+  def show
+    @questionnaires = Questionnaire.all
+  end
 
   def profile
 

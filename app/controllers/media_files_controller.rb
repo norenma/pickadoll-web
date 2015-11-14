@@ -1,6 +1,6 @@
 class MediaFilesController < ApplicationController
-	def create 
+	def create
 		render plain: params[:question].inspect
-	end 
+	end
 
 end

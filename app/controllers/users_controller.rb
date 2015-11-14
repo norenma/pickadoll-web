@@ -1,28 +1,28 @@
 class UsersController < ApplicationController
-	#create a new user 
+	#create a new user
 	def new
 		@user = User.new
 	end
 
-	def create 
+	def create
 		@user = User.new(user_params)
 		#render plain: @user.inspect
-		if @user.save 
+		if @user.save
 			flash[:notice] = "Konto skapat!"
 			flash[:color] = "valid"
-		else  
+		else
 			flash[:notice] = "Ett fel uppstod"
 			flash[:color] = "invalid"
-		end 
+		end
 
 		render 'new'
-	end 
+	end
 
 	before_filter :save_login_state, :only => [:new, :create]
-	
-	private 
+
+	private
 		#definierar vilka parametrar som är tillåtna för question
-		def user_params 
+		def user_params
 			params.require(:user).permit(:username, :password, :email, :role, :Signup)
 		end
 end
