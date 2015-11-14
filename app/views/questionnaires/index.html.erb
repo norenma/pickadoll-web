@@ -22,17 +22,18 @@
 			<th>Skapad</th>
 			<th>Alternativ</th>
 		</tr>
-	</thead>	
+	</thead>
 	<!-- Info about the questionnaires -->
 	<tbody>
-		<% @questionnaireData.each do |q| %> 
+		<% @questionnaireData.each do |q| %>
 			<tr>
 				<td><%= link_to q['name'], edit_questionnaire_path(q['id']) %></td>
 				<td><%= q['description'] %></td>
 				<td><%= q['owner'][0] %></td>
 				<td><%= link_to q['numberOfAnswers'][0]['numberOfAnswers'], answer_path(q['id']) %> </td>
 				<td><%= q['created_at'] %></td>
-				<td> 
+				<td>
+					<%= link_to 'Kopiera', clone_questionnaire_path(q['id']), method: :post %>
 					<%= link_to 'Radera', questionnaire_path(q['id']), method: :delete, data: {
 					confirm: 'Är du säker på att du vill radera enkäten? Detta kan inte ångras.'
 				} %></td>
@@ -42,4 +43,3 @@
 </table>
 
 <p><%= link_to 'Skapa ny enkät', new_questionnaire_path %></p>
-

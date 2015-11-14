@@ -111,6 +111,44 @@ class QuestionnairesController < ApplicationController
 		redirect_to questionnaires_path
 	end
 
+	def clone
+		puts "Cloning questionnaire: \n#{@questionnaire.to_yaml}"
+
+		@qid = params[:id]
+		@questionnaire = Questionnaire.find(@qid)
+		@categories = Category.where(questionnaire_id_id: @qid).order(order: :asc)
+
+		# Copy questionnaire
+		@new_questionnaire = @questionnaire.dup
+		@new_questionnaire.name = "Kopia av #{@new_questionnaire.name}"
+		@new_questionnaire.save
+
+		@categories.each do |c|
+			# puts "Category: \n#{c.to_yaml}"
+
+			# Copy category
+			new_cat = c.dup
+			new_cat.questionnaire_id_id = @new_questionnaire.id
+			new_cat.save
+
+			questions = Question.where(category_id: c.id)
+			questions.each do |q|
+				# puts "Question: \n#{q.to_yaml}"
+
+				# Copy question
+				new_quest = q.dup
+				new_quest.category_id = new_cat.id
+				new_quest.save
+			end
+
+			new_cat.save
+
+		end
+
+		@new_questionnaire.save
+
+		redirect_to questionnaires_path
+	end
 
 	def addNewCategory
 		@qid = params[:id]
