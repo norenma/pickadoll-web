@@ -77,7 +77,7 @@ h1, h2, h3, h4, h5, h6 {
 	top: 0px; right: 0px;
 	background-color: #f8f8f8;
 	min-width: 170px;
-	height: 3em;
+	max-height: 3em;
 	overflow: hidden;
 	transition: all 0.1s ease-out;
 	-webkit-transition: all 0.1s ease-out;
@@ -94,7 +94,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .user-info-list:hover {
-	height: 6em;
+	max-height: 9em;
 	box-shadow: 0px 0px 5px #bbb;
 }
 

@@ -3,20 +3,23 @@
 
 <h1>Nytt konto</h1>
 
-<%= form_for(:user, :url => {:controller => 'users', :action => 'create'}) do |f| %>
-<p>Användarnamn: <br/> <%= f.text_field :username %> </p>
-<p>Email: <br/> <%= f.text_field :email %> </p>
-<p>Lösenord: <br/> <%= f.password_field :password %> </p>
+<%= form_for(:user, url: {controller: 'users', action: 'create'}, html: {class: 'new-user-form'}) do |f| %>
+	<p>Användarnamn: <br/> <%= f.text_field :username %> </p>
+	<p>Email: <br/> <%= f.text_field :email %> </p>
+	<p>Lösenord: <br/> <%= f.password_field :password %> </p>
+	<p><%= f.check_box :create_user_permission %> Ge rättigheter att skapa nya användare</p>
 
-<%= f.submit :Signup %> 
+	<%= f.submit "Skapa användare" %>
+<% end %>
 
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
 <% end %>
 
 <% if @user.errors.any? %>
-	<ul class="Signup_Errors">
+	<ul class="create-user-errors">
     <% for message_error in @user.errors.full_messages %>
       <li>* <%= message_error %></li>
     <% end %>
     </ul>
 <% end %>
-

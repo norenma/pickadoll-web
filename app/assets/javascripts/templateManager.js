@@ -7,7 +7,7 @@ function setupUSSettings() {
 
 // Makes sure all of the listeners are set (once and only once)
 function setListeners() {
-	$('form input, form textarea').off().on('keyup', handleChangeOnInput);
+	$('form.changes input, form.changes textarea').off().on('keyup', handleChangeOnInput);
 	$('#edit_response_option :file').off().on('change', handleChangeOnInput);
 	$('.responseOptionAvailability :checkbox').off().on('change', handleChangeOnInput);
 
@@ -60,7 +60,7 @@ function loadNewQuestionTemplate (button, questData, cid) {
 function loadEditResponseOptionsTemplate (responseOptionData) {
 	console.log("Loading edit response options template");
 	var htmlTmp = $('#editResponseOptionsForm').html()
-	console.log(responseOptionData);
+	// console.log(responseOptionData);
 	var data = {
 		'name' : responseOptionData.name,
 		'availability' : responseOptionData.availability,
@@ -101,9 +101,37 @@ function loadEditResponseOptionsTemplate (responseOptionData) {
 	// });
 }
 
+function loadAddExistingCategoryTemplate(categoryData) {
+	console.log("Loading add existing category template");
+	var htmlTmp = $('#addExistingCategoryForm').html()
+	// console.log(categoryData);
+	var data = {
+		'categories' : categoryData
+	};
+	$('#addExistingCategoryDetailed').html(_.template(htmlTmp, data));
+
+	// Add handler
+	$('.categoriesInput a').off().on("click", handleAddExistingCategory);
+}
+
+function loadAddExistingQuestionTemplate(categoryId, questionData) {
+	console.log("Loading add existing question template");
+	var htmlTmp = $('#addExistingQuestionForm').html()
+	// console.log(questionData);
+	var data = {
+		'categoryId' : categoryId,
+		'questions' : questionData
+	};
+	$('#addExistingQuestionDetailed').html(_.template(htmlTmp, data));
+
+	// Add handler
+	$('.questionsInput a').off().on("click", handleAddExistingQuestion);
+}
+
 function loadNewCategoryTemplate(data) {
 	var htmlTmp = $('#newCategoryTmp').html()
 	$('ul.survey-content').append(_.template(htmlTmp, data));
+	console.log(data);
 
 	//Sortable questions in categories
 	$(".category-questions" ).sortable({

@@ -194,6 +194,30 @@ class QuestionsController < ApplicationController
 		render json: feedback
 	end
 
+	def list
+		@questions = Question.all
+
+		result = []
+		@questions.each do |quest|
+			cat = Category.find(quest.category_id) rescue nil
+			# Ignore this question if it doesn't belong to a category
+			next unless cat
+
+			questionnaire = Questionnaire.find(cat.questionnaire_id_id) rescue nil
+			# Ignore this category if it doesn't belong to a questionnaire
+			next unless questionnaire
+
+			result << {
+				id: quest.id,
+				name: quest.name,
+				cat_name: cat.name,
+				quest_name: questionnaire.name
+			}
+		end
+
+		render json: result
+	end
+
 	private
 		#definierar vilka parametrar som är tillåtna för question
 		def question_params

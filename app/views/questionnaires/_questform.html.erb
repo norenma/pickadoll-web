@@ -1,10 +1,14 @@
 <ul class="survey-content" >
+<%= javascript_tag do %>
+	window.questionnaire_id = '<%= @questionnaire.id %>';
+<% end %>
+
 <% @categories.each do |c| %>
 	<li class="category" data-categoryid="<%= c.id %>" id="category-<%= c.id %>">
 		<div class="category-bar" >
 			<!-- , :html => {:multipart => true} -->
 			<div class="category-name">
-			<%= form_for c, url: questionnaire_category_path(@questionnaire, c),
+			<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'},
 						remote: true do |f| %>
 				<%= f.text_field :name %>
 			<% end %>
@@ -24,7 +28,7 @@
 			<div class="category-content">
 				<div class="category-text-holder">
 					<label>Kategoritext</label>
-					<%= form_for c, url: questionnaire_category_path(@questionnaire, c),
+					<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'},
 							remote: true do |f| %>
 
 						<%= f.text_area :description %>
@@ -34,7 +38,7 @@
 				<div class="category-image-holder">
 					<!-- A form for the image upload  -->
 					<%= form_for c, :url => { :controller => "categories", :action => :uploadImage }, :html => { :method => :post,
-						:class => 'catImgUploadForm', :multipart => true } do |f| %>
+						:class => 'catImgUploadForm changes', :multipart => true } do |f| %>
 
 						<%= f.hidden_field :id, :value => c.id %>
 
@@ -54,7 +58,7 @@
 				<div class="category-audio-holder">
 					<div class="categoryAudioForm">
 						<%= form_for c, :url => { :controller => "categories", :action => :uploadAudio },
-						:html => { :method => :post, :class => 'catAudioUploadForm',
+						:html => { :method => :post, :class => 'catAudioUploadForm changes',
 						:multipart => true } do |f| %>
 
 						<%= f.hidden_field :id, :value => c.id %>
@@ -87,7 +91,7 @@
 
 				<div class="question-name">
 					<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-						remote: true, :html => {:multipart => true} do |f| %>
+						remote: true, :html => {multipart: true, class: 'changes'} do |f| %>
 						<!-- The questions name  -->
 						<%= f.text_field :name %>
 					<% end %>
@@ -110,7 +114,7 @@
 					<div class="questionText">
 						<label>Frågetext</label>
 						<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-			remote: true, :html => {:multipart => true} do |f| %>
+			remote: true, :html => {multipart: true, class: 'changes'} do |f| %>
 
 							<p>
 								<%= f.text_area :text %>
@@ -121,7 +125,8 @@
 
 					<div class="questionImg">
 						<div class="questionImgForm">
-							<%= form_for q, :url => { :controller => "questions", :action => :uploadImage }, :html => { :method => :post, :class => 'imgUploadForm', :multipart => true } do |f| %>
+							<%= form_for q, :url => { :controller => "questions", :action => :uploadImage },
+							:html => { :method => :post, :class => 'imgUploadForm changes', :multipart => true } do |f| %>
 
 								<%= f.hidden_field :id, :value => q.id %>
 								<%= f.label :image, "Bild" %>
@@ -143,7 +148,7 @@
 					<div class="questionAudio">
 						<div class="questionAudioForm">
 							<%= form_for q, :url => { :controller => "questions", :action => :uploadAudio },
-							:html => { :method => :post, :class => 'audioUploadForm',
+							:html => { :method => :post, :class => 'audioUploadForm changes',
 							:multipart => true } do |f| %>
 
 							<%= f.hidden_field :id, :value => q.id %>
@@ -166,7 +171,7 @@
 						<label>Svarsalternativ</label>
 						<div class = "questionOptionsForm">
 							<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-				remote: true, :html => {:multipart => true} do |f| %>
+				remote: true, :html => {multipart: true, class: 'changes'} do |f| %>
 							<%=
 								collection_select(:question, :response_id, @response_options, :id, :name, {prompt:true, :selected => q.response_id}, {:class => 'response_option_select'} )
 							%>
@@ -197,6 +202,9 @@
 				<button class="addQuestionToCategory" data-categoryid="<%=c.id %>">
 				Lägg till fråga
 				</button>
+				<button class="addExistingQuestionToCategory" data-categoryid="<%=c.id %>">
+				Lägg till existerande fråga ...
+				</button>
 			</p>
 		</li>
 
@@ -211,13 +219,14 @@
 	<li>
 		<p>
 			<button class="addCategory">Lägg till kategori</button>
+			<button class="addExistingCategory">Lägg till existerande kategori ...</button>
 		</p>
 	</li>
 </ul>
 
 <!-- A little form for adding new response options -->
-<div id="editRespOptForm">
-	<div id="editRespContent">
+<div id="editRespOptForm" class="popupForm">
+	<div id="editRespContent" class="popupContent">
 		<h2>Svarsalternativ</h2>
 		<ul>
 			<li>
@@ -227,7 +236,7 @@
 			</li>
 		</ul>
 
-		<form>
+		<form class='changes'>
 			<select id="respOptionsEditDropdown">
 				<option value="0">Välj ett svarsalternativ</option>
 			</select>
@@ -241,13 +250,49 @@
 	</div>
 </div>
 
+<!-- A little form for adding existing categories -->
+<div id="addExCatForm" class="popupForm">
+	<div id="addExCatContent" class="popupContent">
+		<h2>Lägg till existerande kategori</h2>
+		<ul>
+			<li>
+				<a href="#" class="closeAddCatPopup">
+					<%= image_tag("close_button.png", :alt => "Close button") %>
+				</a>
+			</li>
+		</ul>
+
+		<div id="addExistingCategoryDetailed">
+
+		</div>
+	</div>
+</div>
+
+<!-- A little form for adding existing questions -->
+<div id="addExQuestForm" class="popupForm">
+	<div id="addExQuestContent" class="popupContent">
+		<h2>Lägg till existerande fråga</h2>
+		<ul>
+			<li>
+				<a href="#" class="closeAddQuestPopup">
+					<%= image_tag("close_button.png", :alt => "Close button") %>
+				</a>
+			</li>
+		</ul>
+
+		<div id="addExistingQuestionDetailed">
+
+		</div>
+	</div>
+</div>
+
 <!-- ONLY TEMPLATE STUFF -->
 <!-- Templates for HTML -->
 <script type="text/template" id="newQuestionFormTemp">
 	<li class="question-bar" data-questionid="[%= id %]" id="question-bar-[%= id %]">
 		<div class="question-name">
 			<form accept-charset="UTF-8" action="/questionnaires/[%= questid %]/categories/[%= category_id %]/questions/[%= id%]"
-				class="edit_question" data-remote="true" enctype="multipart/form-data"
+				class="edit_question changes" data-remote="true" enctype="multipart/form-data"
 				id="edit_question_[%= id %]" method="post">
 				<div style="display:none"><input name="_method" type="hidden" value="patch">
 				<input name="utf8" type="hidden" value="✓"><input name="_method" type="hidden" value="patch"></div>
@@ -271,7 +316,7 @@
 		<div class="question-content">
 			<div class="questionText">
 				<label>Frågetext</label>
-				<form accept-charset="UTF-8" action="/questionnaires/[%= questid %]/categories/[%= category_id %]/questions/[%= id %]" class="edit_question" data-remote="true" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"><input name="_method" type="hidden" value="patch"></div>
+				<form accept-charset="UTF-8" action="/questionnaires/[%= questid %]/categories/[%= category_id %]/questions/[%= id %]" class="edit_question changes" data-remote="true" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"><input name="_method" type="hidden" value="patch"></div>
 
 				<p>
 					<textarea id="question_text" name="question[text]" placeholder="Skriv här"></textarea>
@@ -285,7 +330,7 @@
 			</div>
 
 			<div class="questionImgForm">
-				<form accept-charset="UTF-8" action="/questions/uploadImage" class="imgUploadForm" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"></div>
+				<form accept-charset="UTF-8" action="/questions/uploadImage" class="imgUploadForm changes" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"></div>
 
 					<input id="question_id" name="question[id]" type="hidden" value="[%= id %]">
 
@@ -301,7 +346,7 @@
 
 				<div class="questionAudioForm">
 					<form accept-charset="UTF-8" action="/questions/uploadAudio"
-					class="audioUploadForm" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
+					class="audioUploadForm changes" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
 						<div style="display:none">
 						<input name="utf8" type="hidden" value="✓">
 						</div>
@@ -319,7 +364,7 @@
 			</p>
 
 			<div class="questionOptionsForm">
-				<form accept-charset="UTF-8" action="/questionnaires/[%= questid%]/categories/[%= category_id %]/questions/[%= id %]" class="edit_question" data-remote="true" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
+				<form accept-charset="UTF-8" action="/questionnaires/[%= questid%]/categories/[%= category_id %]/questions/[%= id %]" class="edit_question changes" data-remote="true" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
 					<div style="display:none">
 						<input name="utf8" type="hidden" value="✓">
 						<input name="_method" type="hidden" value="patch">
@@ -355,7 +400,7 @@
 
 <!-- Template for the edit-view of the response options -->
 <script type="text/template" id="editResponseOptionsForm">
-	<form accept-charset="UTF-8" action="/response_options/edit" class="edit_response_option"
+	<form accept-charset="UTF-8" action="/response_options/edit" class="edit_response_option changes"
 	id="edit_response_option" method="post" enctype="multipart/form-data">
 		<table>
 			<div style="display: none;"><input type="hidden" name="response_option_id" class="response_option_id" value="[%= id %]"></div>
@@ -400,6 +445,56 @@
 	</form>
 </script>
 
+<!-- Template for the add existing category view -->
+<script type="text/template" id="addExistingCategoryForm">
+	<form accept-charset="UTF-8" action="/add_existing_category" class="add_existing_category changes"
+	id="add_existing_category" method="post" enctype="multipart/form-data">
+		<table>
+			<thead>
+				<tr>
+					<th>Namn</th>
+					<th>Tillhör enkät</th>
+				</tr>
+			</thead>
+
+			<tbody id="addExistingCategoryTBody">
+			[% _.each(categories, function (cat) { %]
+				<tr class="categoriesInput">
+					<td><a href="#" data-category-id="[%= cat.id %]">[%= cat.name %]</td>
+					<td>[%= cat.quest_name %]</td>
+				</tr>
+			[% }); %]
+			</tbody>
+		</table>
+	</form>
+</script>
+
+<!-- Template for the add existing question view -->
+<script type="text/template" id="addExistingQuestionForm">
+	<form accept-charset="UTF-8" action="/add_existing_question" class="add_existing_question changes"
+	id="add_existing_question" method="post" enctype="multipart/form-data">
+		<table>
+			<thead>
+				<tr>
+					<th>Namn</th>
+					<th>Tillhör kategori</th>
+					<th>Tillhör enkät</th>
+				</tr>
+			</thead>
+
+			<tbody id="addExistingQuestionTBody">
+			[% _.each(questions, function (q) { %]
+				<tr class="questionsInput">
+					<td><a href="#" data-category-id="[%= categoryId %]" data-question-id="[%= q.id %]">[%= q.name %]</td>
+					<td>[%= q.cat_name %]</td>
+					<td>[%= q.quest_name %]</td>
+				</tr>
+			[% }); %]
+			</tbody>
+		</table>
+	</form>
+</script>
+
 <!-- Template for new response option -->
 <script type="text/template" id="newResponseOptionTemp">
 	<tr class="respOptInput">
@@ -418,13 +513,13 @@
 <script type="text/template" id="newCategoryTmp">
 	<li class="category" data-categoryid="[%= id %]" id="category-[%= id %]">
 		<div class="category-bar">
-			<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id_id %]/categories/[%= id %]" class="edit_category" data-remote="true" id="edit_category_[%= id %]" method="post">
+			<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id_id %]/categories/[%= id %]" class="edit_category changes" data-remote="true" id="edit_category_[%= id %]" method="post">
 			<div style="display:none">
 				<input name="utf8" type="hidden" value="✓">
 				<input name="_method" type="hidden" value="patch">
 			</div>
 
-			<input id="category_name" name="category[name]" type="text" value="Ny kategori" placeholder="(kategori)">
+			<input id="category_name" name="category[name]" type="text" value="[%= name %]" placeholder="(kategori)">
 
 			</form>
 
@@ -443,13 +538,13 @@
 			<div class="category-content">
 				<div class="category-text-holder">
 					<label>Kategoritext</label>
-					<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id_id %]/categories/[%= id %]" class="edit_category" data-remote="true" id="edit_category_[%= id %]" method="post">
+					<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id_id %]/categories/[%= id %]" class="edit_category changes" data-remote="true" id="edit_category_[%= id %]" method="post">
 						<div style="display:none">
 							<input name="utf8" type="hidden" value="✓">
 							<input name="_method" type="hidden" value="patch">
 						</div>
 
-						<textarea id="category_description" name="category[description]" placeholder="Skriv här"></textarea>
+						<textarea id="category_description" name="category[description]" placeholder="Skriv här">[%= description %]</textarea>
 						<!-- <input name="commit" type="submit" value="Spara"> -->
 					</form>
 				</div>
@@ -457,7 +552,7 @@
 				<div class="category-image-holder">
 
 					<!-- A form for the image upload  -->
-					<form accept-charset="UTF-8" action="/categories/uploadImage" class="catImgUploadForm" enctype="multipart/form-data" id="edit_category_[%= id %]" method="post">
+					<form accept-charset="UTF-8" action="/categories/uploadImage" class="catImgUploadForm changes" enctype="multipart/form-data" id="edit_category_[%= id %]" method="post">
 						<div style="display:none">
 							<input name="utf8" type="hidden" value="✓">
 						</div>
@@ -473,7 +568,7 @@
 
 				<div class="category-audio-holder">
 					<div class="categoryAudioForm">
-						<form accept-charset="UTF-8" action="/categories/uploadAudio" class="catAudioUploadForm" enctype="multipart/form-data" id="edit_category_980190980" method="post">
+						<form accept-charset="UTF-8" action="/categories/uploadAudio" class="catAudioUploadForm changes" enctype="multipart/form-data" id="edit_category_980190980" method="post">
 							<div style="display:none">
 								<input name="utf8" type="hidden" value="✓">
 								<input name="authenticity_token" type="hidden" value="PxbM7sHpVN4B4iujjIRtvoRam3HnQ9W6X7samU90wh0=">
@@ -495,6 +590,9 @@
 				<p>
 					<button class="addQuestionToCategory" data-categoryid="[%= id %]">
 					Lägg till fråga
+					</button>
+					<button class="addExistingQuestionToCategory" data-categoryid="[%= id %]">
+					Lägg till existerande fråga ...
 					</button>
 				</p>
 			</li>

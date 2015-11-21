@@ -180,6 +180,35 @@ window.categoryDropped = categoryDropped = (e) ->
 			console.log data
 #end of categoryDropped
 
+#handleAddExistingCategory
+window.handleAddExistingCategory = handleAddExistingCategory = (e) ->
+	e.preventDefault()
+	catId = $(e.target).attr('data-category-id')
+	console.log "Add an existing category " + catId
+
+	$.ajax({
+		'url' : '/questionnaires/' + questionnaire_id + '/categories/' + catId + '/add'
+		'type' : 'POST'
+		'success' : (data) ->
+			console.log data
+		})
+#end of handleAddExistingCategory
+
+#handleAddExistingQuestion
+window.handleAddExistingQuestion = handleAddExistingQuestion = (e) ->
+	e.preventDefault()
+	catId = $(e.target).attr('data-category-id')
+	questId = $(e.target).attr('data-question-id')
+	console.log "Add an existing question " + questId + " to category " + catId
+
+	$.ajax({
+		'url' : '/questionnaires/' + questionnaire_id + '/categories/' + catId + '/questions/' + questId + '/add'
+		'type' : 'POST'
+		'success' : (data) ->
+			console.log data
+		})
+#end of handleAddExistingQuestion
+
 #handleCategoryDelete
 window.handleCatDelete = handleCatDelete = (e) ->
 	e.preventDefault()
@@ -246,6 +275,31 @@ window.loadResponseOptionMenu = loadResponseOptionMenu = () ->
 	$('#respOptionsEditDropdown').off().on 'change', loadResponseOptionEdit
 #end
 
+#Function for loading the dropdown menu for the response options
+window.loadAddCategoryMenu = loadAddCategoryMenu = () ->
+	console.log "loadAddCategoryMenu"
+
+	$.ajax({
+		'url' : '/categories/list/all'
+		'success' : (data) ->
+			res = data
+			loadAddExistingCategoryTemplate(res);
+	})
+#end
+
+#Function for loading the dropdown menu for the response options
+window.loadAddQuestionMenu = loadAddQuestionMenu = (e) ->
+	categoryId = e.target.getAttribute('data-categoryid')
+	console.log "loadAddQuestionMenu " + categoryId
+	console.log questionnaire_id
+
+	$.ajax({
+		'url' : '/questions/list/all'
+		'success' : (data) ->
+			res = data
+			loadAddExistingQuestionTemplate(categoryId, res);
+	})
+#end
 
 #Method for handling dropped question-bar
 window.dropped = dropped = (e, ui) ->
@@ -432,6 +486,16 @@ questionnaireInit = (e) ->
 		$('#editRespOptForm').css 'display', 'block'
 	)
 
+	$('.addExistingCategory').on "click", (e) ->
+		e.preventDefault()
+		loadAddCategoryMenu()
+		$('#addExCatForm').css 'display', 'block'
+
+	$('.addExistingQuestionToCategory').on "click", (e) ->
+		e.preventDefault()
+		loadAddQuestionMenu(e)
+		$('#addExQuestForm').css 'display', 'block'
+
 	$('.response_option_select').on 'change', responseOptionSelected
 
 	$('.addQuestionToCategory').on 'click', addNewQuestionToCategory
@@ -444,8 +508,16 @@ questionnaireInit = (e) ->
 		e.preventDefault()
 		$('#editRespOptForm').css 'display', 'none'
 
+	$('.closeAddCatPopup').on 'click', (e) ->
+		e.preventDefault()
+		$('#addExCatForm').css 'display', 'none'
+
+	$('.closeAddQuestPopup').on 'click', (e) ->
+		e.preventDefault()
+		$('#addExQuestForm').css 'display', 'none'
+
 	#Listener for the change-events on the input elements
-	$('form input, form textarea').on 'keyup', handleChangeOnInput
+	$('form.changes input, form.changes textarea').on 'keyup', handleChangeOnInput
 
 	$('.newResponseOptionSet').on 'click', addNewResponseOptionSet
 

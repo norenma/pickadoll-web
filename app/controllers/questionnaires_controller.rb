@@ -19,7 +19,7 @@ class QuestionnairesController < ApplicationController
 		end
 		#@questionnairesWithResults = Questionnaire.find()
 
-		if authenticate_user()
+		if authenticate_user
 			@curr_user = User.find(session[:user_id])
 			@username = @curr_user.username
 		end
@@ -97,7 +97,7 @@ class QuestionnairesController < ApplicationController
 		#if you want to create a new response option
 		@response_option = ResponseOption.new
 
-		if authenticate_user()
+		if authenticate_user
 			@curr_user = User.find(session[:user_id])
 			@username = @curr_user.username
 		end
@@ -152,17 +152,10 @@ class QuestionnairesController < ApplicationController
 
 	def addNewCategory
 		@qid = params[:id]
-		@lastOrderCategory = Category.where(questionnaire_id_id: @qid).order(order: :desc).first
-
-		if @lastOrderCategory
-			@orderVal = @lastOrderCategory.order + 1
-		else
-			@orderVal = 1
-		end
 
 		@category = Category.new
-		@category.order = @orderVal
-		@category.name = "Ny kategori "
+		@category.order = last_category_order_for_id(@qid)
+		@category.name = "Ny kategori"
 		@category.questionnaire_id_id = @qid
 
 		@category.save
@@ -183,6 +176,50 @@ class QuestionnairesController < ApplicationController
 		end
 
 		render json: @catOrder
+	end
+
+	def add_existing_category
+		questionnaire_id = params[:id]
+		category_id = params[:cat_id]
+		puts "Qid: #{questionnaire_id}, Catid: #{category_id}"
+
+		c = Category.find(category_id)
+
+		# Copy category
+		@category = c.dup
+		@category.order = last_category_order_for_id(questionnaire_id)
+		@category.questionnaire_id_id = questionnaire_id
+		@category.save
+
+		questions = Question.where(category_id: c.id)
+		questions.each do |q|
+			# Copy question
+			new_quest = q.dup
+			new_quest.category_id = @category.id
+			new_quest.save
+		end
+
+		@category.save
+
+		render js: "window.location = '#{edit_questionnaire_path(questionnaire_id)}'"
+	end
+
+	def add_existing_question
+		questionnaire_id = params[:id]
+		category_id = params[:cat_id]
+		question_id = params[:quest_id]
+		puts "Qid: #{questionnaire_id}, Catid: #{category_id}, Questid: #{question_id}"
+
+		c = Category.find(category_id)
+		q = Question.find(question_id)
+
+		# Copy question
+		@question = q.dup
+		@question.order = last_question_order_for_id(c.id)
+		@question.category_id = c.id
+		@question.save
+
+		render js: "window.location = '#{edit_questionnaire_path(questionnaire_id)}'"
 	end
 
 	def setResponseOptionForAllQuestions
@@ -216,5 +253,15 @@ class QuestionnairesController < ApplicationController
 		def questionnaire_params
 			#params.require(:question).permit(:name, :text, :media_files)
 			params.require(:questionnaire).permit(:name, :description)
+		end
+
+		def last_category_order_for_id(id)
+			last_order_category = Category.where(questionnaire_id_id: id).order(order: :desc).first
+			last_order_category ? last_order_category.order + 1 : 1
+		end
+
+		def last_question_order_for_id(id)
+			last_order_question = Question.where(category_id: id).order(order: :desc).first
+			last_order_question ? last_order_question.order + 1 : 1
 		end
 end

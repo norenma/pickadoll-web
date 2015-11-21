@@ -31,13 +31,19 @@ Rails.application.routes.draw do
 
   post 'questionnaires/:id/addNewCategory', to: 'questionnaires#addNewCategory'
   post 'questionnaires/:id/updateCategoryOrder', to: 'questionnaires#updateCategoryOrder'
+  post 'questionnaires/:id/categories/:cat_id/add', to: 'questionnaires#add_existing_category'
+  post 'questionnaires/:id/categories/:cat_id/questions/:quest_id/add', to: 'questionnaires#add_existing_question'
 
   #set response option for all questions in a questionnaire
   post 'questionnaires/:id/setResponseOptionForAllQuestions', to: 'questionnaires#setResponseOptionForAllQuestions'
 
 
   #for categories
+  get 'categories/list/all', to: 'categories#list'
   post 'questionnaires/:id/categories/:id/addNewQuestionToCategory', to: 'categories#addNewQuestionToCategory'
+
+  #for questions
+  get 'questions/list/all', to: 'questions#list'
 
   #for response options
   get 'response_options/list/all', to: 'response_options#list'

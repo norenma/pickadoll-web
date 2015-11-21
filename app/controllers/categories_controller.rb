@@ -144,6 +144,26 @@ class CategoriesController < ApplicationController
 		deleteCategory(params[:id])
 	end
 
+	def list
+		@categories = Category.all
+
+		result = []
+		@categories.each do |cat|
+			quest = Questionnaire.find(cat.questionnaire_id_id) rescue nil
+
+			# Ignore this category if it doesn't belong to a questionnaire
+			next unless quest
+
+			result << {
+				id: cat.id,
+				name: cat.name,
+				quest_name: quest.name
+			}
+		end
+
+		render json: result
+	end
+
 	private
 		def category_params
 			params.require(:category).permit(:name, :description)

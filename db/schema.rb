@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151104215905) do
+ActiveRecord::Schema.define(version: 20151121104403) do
 
   create_table "answers", force: true do |t|
     t.string   "tester_id"
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 20151104215905) do
     t.string   "salt"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "create_user_permission"
   end
 
 end

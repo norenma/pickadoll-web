@@ -11,7 +11,7 @@ class AnswersController < ApplicationController
 	def show
 		id = params[:id]
 		@questionnaire = Questionnaire.find(id)
-		if authenticate_user()
+		if authenticate_user
 			@curr_user = User.find(session[:user_id])
 			@username = @curr_user.username
 		end

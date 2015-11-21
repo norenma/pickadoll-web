@@ -1,7 +1,7 @@
 <%= stylesheet_link_tag "application.css" %>
 <h1><%= @question.name %></h1>
 
-<%= form_for :question, url: questions_path do |f|%>
+<%= form_for :question, url: questions_path, html: { class: 'changes' } do |f| %>
 	<p>
 		<%= f.label :text %>
 		<%= f.text_area :text %>
@@ -10,7 +10,7 @@
 
 	<p>
 		<%= f.submit %>
-	</p>	
+	</p>
 <% end %>
 
 <p><%= link_to 'Tillbaka', questions_path %> </p>
