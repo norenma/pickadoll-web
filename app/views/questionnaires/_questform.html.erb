@@ -6,7 +6,7 @@
 <% @categories.each do |c| %>
 	<li class="category" data-categoryid="<%= c.id %>" id="category-<%= c.id %>">
 		<div class="category-bar" >
-			<!-- , :html => {:multipart => true} -->
+			<!-- , html: {multipart: true} -->
 			<div class="category-name">
 			<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'},
 						remote: true do |f| %>
@@ -17,10 +17,10 @@
 			<div class="toolbar">
 				<ul>
 					<li><a href="#" class="edit-btn">
-						<%= image_tag("edit-50.png", :alt => "Edit button") %>
+						<%= image_tag("edit-50.png", alt: "Edit button") %>
 					</a></li>
 					<li><a href="#" class="delete-cat-btn" data-category-id="<%= c.id %>">
-						<%= image_tag("delete.png", :alt => "Delete button") %>
+						<%= image_tag("delete.png", alt: "Delete button") %>
 					</a></li>
 				</ul>
 			</div>
@@ -37,10 +37,10 @@
 
 				<div class="category-image-holder">
 					<!-- A form for the image upload  -->
-					<%= form_for c, :url => { :controller => "categories", :action => :uploadImage }, :html => { :method => :post,
-						:class => 'catImgUploadForm changes', :multipart => true } do |f| %>
+					<%= form_for c, url: { controller: "categories", action: :upload_image }, html: { method: :post,
+						class: 'catImgUploadForm changes', multipart: true } do |f| %>
 
-						<%= f.hidden_field :id, :value => c.id %>
+						<%= f.hidden_field :id, value: c.id %>
 
 						<%= f.label :category_image, 'Bild' %>
 						<%= file_field_tag 'category_image' %>
@@ -57,11 +57,11 @@
 
 				<div class="category-audio-holder">
 					<div class="categoryAudioForm">
-						<%= form_for c, :url => { :controller => "categories", :action => :uploadAudio },
-						:html => { :method => :post, :class => 'catAudioUploadForm changes',
-						:multipart => true } do |f| %>
+						<%= form_for c, url: { controller: "categories", action: :upload_audio },
+						html: { method: :post, class: 'catAudioUploadForm changes',
+						multipart: true } do |f| %>
 
-						<%= f.hidden_field :id, :value => c.id %>
+						<%= f.hidden_field :id, value: c.id %>
 
 						<%= f.label :category_audio, 'Ljud' %>
 						<%= file_field_tag 'category_audio' %>
@@ -91,7 +91,7 @@
 
 				<div class="question-name">
 					<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-						remote: true, :html => {multipart: true, class: 'changes'} do |f| %>
+						remote: true, html: {multipart: true, class: 'changes'} do |f| %>
 						<!-- The questions name  -->
 						<%= f.text_field :name %>
 					<% end %>
@@ -102,10 +102,10 @@
 				<div class="toolbar">
 					<ul>
 						<li><a href="#" class="edit-btn">
-							<%= image_tag("edit-50.png", :alt => "Edit button") %>
+							<%= image_tag("edit-50.png", alt: "Edit button") %>
 						</a></li>
 						<li><a href="#" class="delete-btn" data-question-id="<%= q.id %>">
-							<%= image_tag("delete.png", :alt => "Delete button") %>
+							<%= image_tag("delete.png", alt: "Delete button") %>
 						</a></li>
 					</ul>
 				</div>
@@ -114,7 +114,7 @@
 					<div class="questionText">
 						<label>Frågetext</label>
 						<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-			remote: true, :html => {multipart: true, class: 'changes'} do |f| %>
+			remote: true, html: {multipart: true, class: 'changes'} do |f| %>
 
 							<p>
 								<%= f.text_area :text %>
@@ -125,10 +125,10 @@
 
 					<div class="questionImg">
 						<div class="questionImgForm">
-							<%= form_for q, :url => { :controller => "questions", :action => :uploadImage },
-							:html => { :method => :post, :class => 'imgUploadForm changes', :multipart => true } do |f| %>
+							<%= form_for q, url: { controller: "questions", action: :upload_image },
+							html: { method: :post, class: 'imgUploadForm changes', multipart: true } do |f| %>
 
-								<%= f.hidden_field :id, :value => q.id %>
+								<%= f.hidden_field :id, value: q.id %>
 								<%= f.label :image, "Bild" %>
 								<%= file_field_tag 'question_image' %>
 
@@ -147,11 +147,11 @@
 
 					<div class="questionAudio">
 						<div class="questionAudioForm">
-							<%= form_for q, :url => { :controller => "questions", :action => :uploadAudio },
-							:html => { :method => :post, :class => 'audioUploadForm changes',
-							:multipart => true } do |f| %>
+							<%= form_for q, url: { controller: "questions", action: :upload_audio },
+							html: { method: :post, class: 'audioUploadForm changes',
+							multipart: true } do |f| %>
 
-							<%= f.hidden_field :id, :value => q.id %>
+							<%= f.hidden_field :id, value: q.id %>
 
 							<%= f.label :audio, "Ljud" %>
 							<%= file_field_tag 'question_audio' %>
@@ -161,8 +161,8 @@
 
 						<div class="questionAudioPlayer">
 							<% if q.question_audio %>
-							<% audFile = MediaFile.find(q.question_audio) %>
-							<audio controls="controls" src="/uploads/<%= audFile.ref %>"></audio>
+							<% audio_file = MediaFile.find(q.question_audio) %>
+							<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
 							<% end %>
 						</div>
 					</div>
@@ -171,9 +171,9 @@
 						<label>Svarsalternativ</label>
 						<div class = "questionOptionsForm">
 							<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-				remote: true, :html => {multipart: true, class: 'changes'} do |f| %>
+				remote: true, html: {multipart: true, class: 'changes'} do |f| %>
 							<%=
-								collection_select(:question, :response_id, @response_options, :id, :name, {prompt:true, :selected => q.response_id}, {:class => 'response_option_select'} )
+								collection_select(:question, :response_id, @response_options, :id, :name, {prompt:true, selected: q.response_id}, {class: 'response_option_select'} )
 							%>
 					</div>
 
@@ -231,7 +231,7 @@
 		<ul>
 			<li>
 				<a href="#" class="closeRespPopup">
-					<%= image_tag("close_button.png", :alt => "Close button") %>
+					<%= image_tag("close_button.png", alt: "Close button") %>
 				</a>
 			</li>
 		</ul>
@@ -257,7 +257,7 @@
 		<ul>
 			<li>
 				<a href="#" class="closeAddCatPopup">
-					<%= image_tag("close_button.png", :alt => "Close button") %>
+					<%= image_tag("close_button.png", alt: "Close button") %>
 				</a>
 			</li>
 		</ul>
@@ -275,7 +275,7 @@
 		<ul>
 			<li>
 				<a href="#" class="closeAddQuestPopup">
-					<%= image_tag("close_button.png", :alt => "Close button") %>
+					<%= image_tag("close_button.png", alt: "Close button") %>
 				</a>
 			</li>
 		</ul>
@@ -330,7 +330,7 @@
 			</div>
 
 			<div class="questionImgForm">
-				<form accept-charset="UTF-8" action="/questions/uploadImage" class="imgUploadForm changes" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"></div>
+				<form accept-charset="UTF-8" action="/questions/upload_image" class="imgUploadForm changes" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"></div>
 
 					<input id="question_id" name="question[id]" type="hidden" value="[%= id %]">
 
@@ -345,7 +345,7 @@
 				</div>
 
 				<div class="questionAudioForm">
-					<form accept-charset="UTF-8" action="/questions/uploadAudio"
+					<form accept-charset="UTF-8" action="/questions/upload_audio"
 					class="audioUploadForm changes" enctype="multipart/form-data" id="edit_question_[%= id %]" method="post">
 						<div style="display:none">
 						<input name="utf8" type="hidden" value="✓">
@@ -552,7 +552,7 @@
 				<div class="category-image-holder">
 
 					<!-- A form for the image upload  -->
-					<form accept-charset="UTF-8" action="/categories/uploadImage" class="catImgUploadForm changes" enctype="multipart/form-data" id="edit_category_[%= id %]" method="post">
+					<form accept-charset="UTF-8" action="/categories/upload_image" class="catImgUploadForm changes" enctype="multipart/form-data" id="edit_category_[%= id %]" method="post">
 						<div style="display:none">
 							<input name="utf8" type="hidden" value="✓">
 						</div>
@@ -568,7 +568,7 @@
 
 				<div class="category-audio-holder">
 					<div class="categoryAudioForm">
-						<form accept-charset="UTF-8" action="/categories/uploadAudio" class="catAudioUploadForm changes" enctype="multipart/form-data" id="edit_category_980190980" method="post">
+						<form accept-charset="UTF-8" action="/categories/upload_audio" class="catAudioUploadForm changes" enctype="multipart/form-data" id="edit_category_980190980" method="post">
 							<div style="display:none">
 								<input name="utf8" type="hidden" value="✓">
 								<input name="authenticity_token" type="hidden" value="PxbM7sHpVN4B4iujjIRtvoRam3HnQ9W6X7samU90wh0=">

@@ -1,197 +1,200 @@
 class ResponseOptionsController < ApplicationController
-	protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-	respond_to :json, :xml, :html, :js
+  protect_from_forgery with: :null_session,
+                       if: proc { |c| c.request.format == 'application/json' }
+  respond_to :json, :xml, :html, :js
 
+  def index
+  end
 
-	def index
+  def new
+    # ResponseOption.new
+    response_option = ResponseOption.new
+    response_option.name = 'Ny uppsättning'
+    response_option.availability = false
 
-	end
+    response_option.save
 
-	def new
-		#ResponseOption.new
-		response_option = ResponseOption.new
-		response_option.name = "Ny uppsättning"
-		response_option.availability = false
+    render json: { 'status' => 'created', 'id' => response_option.id }
+  end
 
-		response_option.save
+  def create
+    response_option = ResponseOption.new
+    response_option.name = 'Ny uppsättning'
+    response_option.availability = false
+    response_option.owned_by_question = params[:question_id]
 
-		render json: {'status' => 'created', 'id' => response_option.id}
-	end
+    response_option.save
 
-	def create
-		response_option = ResponseOption.new
-		response_option.name = "Ny uppsättning"
-		response_option.availability = false
-		response_option.owned_by_question = params[:question_id]
+    render json: { 'status' => 'created', 'id' => response_option.id }
 
-		response_option.save
+    # #the JSON that will be stored for the response option
+    # resp_json = []
+    #
+    # resp_vals = params[:respVal]
+    # resp_label = params[:respLbl]
+    # resp_vals.zip(resp_label) do |v, l|
+    # 	obj = {
+    # 		'val' => v,
+    # 		'label' => l
+    # 	}
+    # 	resp_json.push(obj)
+    # end
+    #
+    # @res = ResponseOption.new(resp_params)
+    # @res.options = resp_json.to_json
+    # @res.save
+    #
+    # render plain: resp_json.inspect
+  end
 
-		render json: {'status' => 'created', 'id' => response_option.id}
+  # Main method for editing response options
+  def edit
+    resp_json = []
 
-		# #the JSON that will be stored for the response option
-		# respJSON = []
-		#
-		# respVals = params[:respVal]
-		# respLbl = params[:respLbl]
-		# respVals.zip(respLbl) do |v, l|
-		# 	obj = {
-		# 		'val' => v,
-		# 		'label' => l
-		# 	}
-		# 	respJSON.push(obj)
-		# end
-		#
-		# @res = ResponseOption.new(resp_params)
-		# @res.options = respJSON.to_json
-		# @res.save
-		#
-		# render plain: respJSON.inspect
-	end
+    set_id = params[:response_option_id]
+    set_name = params[:response_option_name]
+    set_availability = params[:response_option_availability] ? true : false
+    resp_vals = params[:respVal]
+    resp_label = params[:respLbl]
+    resp_audio = params[:respAudio]
+    item_ids = params[:respValItemId]
 
-	#Main method for editing response options
-	def edit
-		respJSON = []
+    response_option_set = ResponseOption.find(set_id)
+    response_option_set.name = set_name
+    response_option_set.availability = set_availability
 
-		setId = params[:response_option_id]
-		setName = params[:response_option_name]
-		setAvailability = params[:response_option_availability] ? true : false
-		respVals = params[:respVal]
-		respLbl = params[:respLbl]
-		respAudio = params[:respAudio]
-		itemIDs = params[:respValItemId]
+    response_option_set.save
 
-		respOptionSet = ResponseOption.find(setId)
-		respOptionSet.name = setName
-		respOptionSet.availability = setAvailability
+    # When the set is saved move on to the rest stuff
+    resp_vals.each_with_index do |resp_val, i|
+      id = item_ids[i]
+      if ResponseOptionItem.find(id)
+        response_option_item = ResponseOptionItem.find(item_ids[i])
+        response_option_item.label = resp_label[i]
+        response_option_item.value = resp_val
 
-		respOptionSet.save
+        if resp_audio[i] != ''
+          # upload the audio file
+          item_audio = resp_audio[i]
 
-		#When the set is saved move on to the rest stuff
-		i = 0
-		len = respVals ? respVals.length : 0
-		#testArr = []
-		while (i < len) do
-			id = itemIDs[i]
-			if(ResponseOptionItem.find(id))
-				#testArr.push(id)
-				respOptItem = ResponseOptionItem.find(itemIDs[i])
-				respOptItem.label = respLbl[i]
-				respOptItem.value = respVals[i]
-				if respAudio[i] != ""
-					#upload the audio file
-					itemAudio = respAudio[i]
-					if itemAudio.original_filename
-						File.open(Rails.root.join('public', 'uploads',
-						itemAudio.original_filename), 'wb') do |file|
-							file.write(itemAudio.read)
-							@media_path = File.basename(file.path) #file.path
-							#render text: @media_path
-							@mfiles = MediaFile.create(
-								media_type: 'audio',
-								ref: @media_path
-							)
-							@mfiles.save
-							#get the id of the inserted mediafile
-							@audid = MediaFile.last.id
-							#save the img to the item
-							respOptItem.audio = @audid
-						end
-					else
-					end
-				else
-					#maybe do something here?
-				end
-			else
-				#testArr.push("Other")
-			end
-			#save
-			respOptItem.save
-			#update i
-			i = i + 1
-		end
-		render plain: params
-	end
+          if item_audio.original_filename
+            filename = Rails.root.join('public', 'uploads',
+                                       item_audio.original_filename)
 
-	def destroy
+            File.open(filename, 'wb') do |file|
+              file.write(item_audio.read)
+              @media_path = File.basename(file.path) # file.path
 
-		responseOptionItems = ResponseOptionItem.where(response_option_id: params[:id])
+              # save details about the image in media_files
+              now_time = Time.now.to_i
+              audio_file_name = "option_audio_#{now_time}_#{item_audio.original_filename}"
+              # audio_file_name = 'option_audio_' + now_time.to_s + File.extname(file)
 
-		destroyedId = []
-		responseOptionItems.each do |opt|
-			responseItem = ResponseOptionItem.find(opt.id)
-			responseItem.destroy
+              # rename the uploaded file
+              new_file_name = Rails.root.join('public', 'uploads', audio_file_name)
+              File.rename(file, new_file_name)
 
-			destroyedId.push(opt.id)
-		end
-		respOptSet = ResponseOption.find(params[:id])
-		respOptSet.destroy
+              @media_files = MediaFile.create(
+                media_type: 'audio',
+                ref: audio_file_name
+              )
+              @media_files.save
+              # get the id of the inserted mediafile
+              @audio_id = MediaFile.last.id
+              # save the img to the item
+              response_option_item.audio = @audio_id
+            end
+          end
+        end
+      end
 
-		questionsWithDeletedOption = Question.where(response_id: params[:id])
+      # save
+      response_option_item.save
+    end
+    render plain: params
+  end
 
-		questionsWithDeletedOption.each do |question|
-			question.response_id = nil
+  def destroy
+    response_option_items = ResponseOptionItem.where(response_option_id: params[:id])
 
-			question.save
-		end
+    destroyed_id = []
+    response_option_items.each do |opt|
+      response_item = ResponseOptionItem.find(opt.id)
+      response_item.destroy
 
-		render json: destroyedId
-	end
+      destroyed_id.push(opt.id)
+    end
+    resp_opt_set = ResponseOption.find(params[:id])
+    resp_opt_set.destroy
 
-	def list
-		@response_options = ResponseOption.all
-		render json: @response_options
-	end
+    questions_with_deleted_option = Question.where(response_id: params[:id])
 
-	def getById
-		@id = params[:id]
+    questions_with_deleted_option.each do |question|
+      question.response_id = nil
 
-		@respData = ResponseOption.find(@id)
-		@options = ResponseOptionItem.where(response_option_id: @id)
+      question.save
+    end
 
-		@responseData = {
-			'id' => @respData.id,
-			'name' => @respData.name,
-			'availability' => @respData.availability,
-			'owned_by_question' => @respData.owned_by_question,
-			'options' => @options.to_json
-		};
+    render json: destroyed_id
+  end
 
-		render json: @responseData
-	end
+  def list
+    @response_options = ResponseOption.all
+    render json: @response_options
+  end
 
-	def getAudioById
-		id = params[:id]
+  def by_id
+    @id = params[:id]
 
-		option = ResponseOptionItem.find(id)
-		audio_file = option.audio ? MediaFile.find(option.audio) : ''
+    @resp_data = ResponseOption.find(@id)
+    @options = ResponseOptionItem.where(response_option_id: @id)
 
-		render json: audio_file
-	end
+    @response_data = {
+      'id' => @resp_data.id,
+      'name' => @resp_data.name,
+      'availability' => @resp_data.availability,
+      'owned_by_question' => @resp_data.owned_by_question,
+      'options' => @options.to_json
+    }
 
-	def addResponseOptionItem
-		#the id of the response_options set
-		@roID = params[:id]
-		#create a new response_option_item for that set
-		@item = ResponseOptionItem.new
-		@item.response_option_id = @roID
-		@item.save
+    render json: @response_data
+  end
 
-		render json: @item
-	end
+  def audio_by_id
+    id = params[:id]
 
-	def deleteResponseOptionItem
-		id = params[:id]
+    option = ResponseOptionItem.find(id)
+    audio_file = option.audio ? MediaFile.find(option.audio) : ''
 
-		if ResponseOptionItem.destroy(id)
-			render json: {'status' => 'success', 'item_id' => id}
-		else
-			render json: {'status' => 'fail', 'item_id' => id}
-		end
-	end
+    render json: audio_file
+  end
 
-	private
-		#definierar vilka parametrar som är tillåtna för response_option
-		def resp_params
-			params.require(:response_option).permit(:name, :availability, :owned_by_question, :opts, :respVal, :respLbl)
-		end
+  def add_response_option_item
+    # the id of the response_options set
+    @resp_opt_id = params[:id]
+    # create a new response_option_item for that set
+    @item = ResponseOptionItem.new
+    @item.response_option_id = @resp_opt_id
+    @item.save
+
+    render json: @item
+  end
+
+  def delete_response_option_item
+    id = params[:id]
+
+    if ResponseOptionItem.destroy(id)
+      render json: { 'status' => 'success', 'item_id' => id }
+    else
+      render json: { 'status' => 'fail', 'item_id' => id }
+    end
+  end
+
+  private
+
+  # definierar vilka parametrar som är tillåtna för response_option
+  def resp_params
+    params.require(:response_option).permit(
+      :name, :availability, :owned_by_question, :opts, :respVal, :respLbl)
+  end
 end

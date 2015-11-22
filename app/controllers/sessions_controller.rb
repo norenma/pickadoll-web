@@ -1,37 +1,36 @@
 class SessionsController < ApplicationController
   def login
-  	#sends to login.erb.html
-
+    # sends to login.erb.html
   end
 
-  #def for the auth method
+  # def for the auth method
   def login_attempt
-  	authorized_user = User.authenticate(params[:username_or_email],params[:login_password])
+    authorized_user = User.authenticate(params[:username_or_email],
+                                        params[:login_password])
 
     if authorized_user
       session[:user_id] = authorized_user.id
-      flash[:notice] = "Welcome again, you logged in as #{authorized_user.username}"
-      #redirect_to(:action => 'home')
-      redirect_to(:controller => 'questionnaires', :action => 'index')
+      flash[:notice] = "Welcome again, #{authorized_user.username}."
+      # redirect_to(:action => 'home')
+      redirect_to(controller: 'questionnaires', action: 'index')
     else
-      flash[:notice] = "Invalid Username or Password"
-      flash[:color] = "invalid"
-      render "login"
+      flash[:notice] = 'Invalid Username or Password'
+      flash[:color] = 'invalid'
+      render 'login'
     end
 
-  	#redirect_to(:controller => 'sessions', :action => 'home')
-    #return false
+    # redirect_to(:controller => 'sessions', :action => 'home')
+    # return false
   end
 
-  #logout
+  # logout
   def logout
-  	session[:user_id] = nil
-  	flash[:notice] = ''
-  	redirect_to :action => 'login'
+    session[:user_id] = nil
+    flash[:notice] = ''
+    redirect_to action: 'login'
   end
 
   def home
-
   end
 
   def show
@@ -39,13 +38,11 @@ class SessionsController < ApplicationController
   end
 
   def profile
-
   end
 
   def setting
   end
 
-  before_filter :authenticate_user, :only => [:home, :profile, :setting]
-  before_filter :save_login_state, :only => [:login, :login_attempt]
-
+  before_action :authenticate_user, only: [:home, :profile, :setting]
+  before_action :save_login_state, only: [:login, :login_attempt]
 end

@@ -15,7 +15,7 @@
 			<td> <%= q.id %> </td>
 			<td> <%= q.name %> </td>
 			<td> <%= q.text %> </td>
-			<td> <%= link_to 'Edit', edit_question_path(q) %> | 
+			<td> <%= link_to 'Edit', edit_question_path(q) %> |
 				<%= link_to 'Radera', question_path(q), method: :delete, data: {
 					confirm: 'Är du säker på att du vill radera frågan?'
 				} %>
@@ -23,4 +23,3 @@
 		</tr>
 	<% end %>
 </table>
-

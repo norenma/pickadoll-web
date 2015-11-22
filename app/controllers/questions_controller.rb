@@ -1,231 +1,214 @@
 class QuestionsController < ApplicationController
-	protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-	respond_to :json, :xml, :html, :js
+  protect_from_forgery with: :null_session,
+                       if: proc { |c| c.request.format == 'application/json' }
+  respond_to :json, :xml, :html, :js
 
-	def index
-		@questions = Question.all
-	end
+  def index
+    @questions = Question.all
+  end
 
-	def new
-		@questionnaire = Questionnaire.find(params[:questionnaire_id])
-		@category = Category.find(params[:category_id])
-		@question = Question.new
-		@media_files = MediaFile.new
-		#@question.media = Media.new
-	end
+  def new
+    @questionnaire = Questionnaire.find(params[:questionnaire_id])
+    @category = Category.find(params[:category_id])
+    @question = Question.new
+    @media_files = MediaFile.new
+    # @question.media = Media.new
+  end
 
-	def create
-		@question = Question.new(question_params)
-		@question.category_id = params[:category_id]
-		@question.save
+  def create
+    @question = Question.new(question_params)
+    @question.category_id = params[:category_id]
+    @question.save
 
-		@imgf = params[:image_file]
+    @image_file = params[:image_file]
 
-		if @imgf != nil
-			File.open(Rails.root.join('public', 'uploads',
-				@imgf.original_filename), 'wb') do |file|
-					file.write(@imgf.read)
-					media_path = File.basename(file.path) #file.path
-					#render text: @media_path
-					@mfiles = @question.media_files.create(
-						media_type: params[:media_files][:media_type],
-						ref: media_path
-					)
-					@mfiles.save
+    if !@image_file.nil?
+      File.open(Rails.root.join('public', 'uploads',
+                                @image_file.original_filename), 'wb') do |file|
+        file.write(@image_file.read)
+        media_path = File.basename(file.path) # file.path
+        # render text: @media_path
+        @media_files = @question.media_files.create(
+          media_type: params[:media_files][:media_type],
+          ref: media_path
+        )
+        @media_files.save
+        redirect_to edit_questionnaire_path(params[:questionnaire_id])
+        # redirect_to questions_path
+      end
+    else
+      redirect_to edit_questionnaire_path(params[:questionnaire_id])
+    end
+  end
 
-					redirect_to edit_questionnaire_path(params[:questionnaire_id])
-					#redirect_to questions_path
-				end
-		else
-			redirect_to edit_questionnaire_path(params[:questionnaire_id])
-		end
-	end
+  def edit
+    @questionnaire = Questionnaire.find(params[:questionnaire_id])
+    @category = Category.find(params[:category_id])
+    @q_id = Integer(params[:id])
+    # render plain: @q_id.inspect
 
-	def edit
-		@questionnaire = Questionnaire.find(params[:questionnaire_id])
-		@category = Category.find(params[:category_id])
-		@qid = Integer(params[:id])
-		#render plain: @qid.inspect
+    @question = Question.find(params[:id])
+    #:question_id => @q_id
+    @media_files = MediaFile.find_by question_id: @q_id
+  end
 
-		@question = Question.find(params[:id])
-		#:question_id => @qid
-		@media_files = MediaFile.find_by question_id: @qid
-	end
+  def show
+    @question = Question.find(params[:id])
+  end
 
-	def show
-		@question = Question.find(params[:id])
-	end
+  # method for handling the update of a question
+  def update
+    respond_to do |format|
+      @question = Question.find(params[:id])
+      # @media_files = @question.media_files.update(media_file_params)
 
-	#method for handling the update of a question
-	def update
-		respond_to do |format|
-			@question = Question.find(params[:id])
-			#@mfiles = @question.media_files.update(media_file_params)
+      if params[:question_image]
+        @quest_img = params[:question_image]
+        # upload image file to the uploads folder
+        File.open(Rails.root.join('public', 'uploads',
+                                  @quest_img.original_filename), 'wb') do |file|
+          file.write(@quest_img.read)
+          media_path = File.basename(file.path)
+          # render plain: @question.inspect
+          # save details about the image in media_files
+          media_files = MediaFile.create(
+            media_type: 'img',
+            ref: media_path
+          )
+          media_files.save
+          # get the id of the inserted mediafile
+          @img_id = MediaFile.last.id
+          # render plain: mid
+        end
+        # render plain: @quest_img.inspect
+      end
 
-			if params[:question_image]
-				@questImg = params[:question_image]
+      if @question.update(question_params)
+        if @img_id
+          @question.question_image = @img_id
+          @question.save
+        end
+        format.json { render json: @question, status: 200 }
+        format.html { render nothing: true, notice: 'Update successful!' }
+      end
+    end
+  end
 
-				#upload image file to the uploads folder
-				File.open(Rails.root.join('public', 'uploads',
-				@questImg.original_filename), 'wb') do |file|
-					file.write(@questImg.read)
-					media_path = File.basename(file.path)
-					#render plain: @question.inspect
-					#save details about the image in media_files
-					mfiles = MediaFile.create(
-						media_type: 'img',
-						ref: media_path
-					)
-					mfiles.save
-					#get the id of the inserted mediafile
-					@imgid = MediaFile.last.id
-					#render plain: mid
-				end
-				#render plain: @questImg.inspect
-			else
-				#Something else
-			end
+  def upload_image
+    # respond_to do |format|
+    # render plain: params.inspect
+    if params[:question_image]
+      @quest_img = params[:question_image]
+      @q_id = params[:question][:id]
 
-			if @question.update(question_params)
+      # upload image file to the uploads folder
+      File.open(Rails.root.join('public', 'uploads',
+                                @quest_img.original_filename), 'wb') do |file|
+        file.write(@quest_img.read)
+        @media_path = File.basename(file.path)
+        now_time = Time.now.to_i
+        image_file_name = 'image_' + now_time.to_s + File.extname(file)
+        # rename the uploaded file
+        new_file_name = Rails.root.join('public', 'uploads', image_file_name)
+        File.rename(file, new_file_name)
+        # save details about the image in media_files
+        @media_files = MediaFile.create(
+          media_type: 'img',
+          ref: image_file_name
+        )
+        @media_files.save
+        # get the id of the inserted mediafile
+        @img_id = MediaFile.last.id
+        # save the img to the question
+        @quest = Question.find(@q_id)
+        @quest.question_image = @img_id
+        @quest.save
+        @media_res = MediaFile.find(@img_id)
+        render json: @media_res
+      end
+    end
+    # end
+  end
 
-				if @imgid
-					@question.question_image = @imgid
-					@question.save
-				else
-				end
+  def upload_audio
+    if params[:question_audio]
+      @quest_audio = params[:question_audio]
+      @q_id = params[:question][:id]
 
-				format.json { render :json => @question, :status => 200 }
-	            format.html { render :nothing => true, :notice => 'Update successful!' }
-			else
+      # upload image file to the uploads folder
+      File.open(Rails.root.join('public', 'uploads',
+                                @quest_audio.original_filename), 'wb') do |file|
+        file.write(@quest_audio.read)
+        @media_path = File.basename(file.path)
+        # save details about the image in media_files
+        now_time = Time.now.to_i
+        audio_file_name = 'audio_' + now_time.to_s + File.extname(file)
+        # rename the uploaded file
+        new_file_name = Rails.root.join('public', 'uploads', audio_file_name)
+        File.rename(file, new_file_name)
+        @media_files = MediaFile.create(
+          media_type: 'audio',
+          ref: audio_file_name
+        )
+        @media_files.save
+        # get the id of the inserted mediafile
+        @img_id = MediaFile.last.id
+        # save the img to the question
+        @quest = Question.find(@q_id)
+        @quest.question_audio = @img_id
+        @quest.save
+        @media_res = MediaFile.find(@img_id)
+        render json: @media_res
+      end
+      # render plain: @quest_audio.inspect
+    end
+  end
 
-			end
-		end
-	end
+  def destroy
+    @question = Question.find(params[:id])
+    @question.destroy
 
-	def uploadImage
-		#respond_to do |format|
-		#render plain: params.inspect
-		if params[:question_image]
-			@questImg = params[:question_image]
-			@qid = params[:question][:id]
+    feedback = {
+      'status' => 'destroyed',
+      'id' => params[:id]
+    }
+    # redirect_to questions_path
+    render json: feedback
+  end
 
-			#upload image file to the uploads folder
-			File.open(Rails.root.join('public', 'uploads',
-			@questImg.original_filename), 'wb') do |file|
-				file.write(@questImg.read)
-				@media_path = File.basename(file.path)
+  def list
+    @questions = Question.all
 
-				currTime = Time.now.to_i
-				imageFileName = 'image_' + currTime.to_s + File.extname(file)
-				#rename the uploaded file
-				newFileName =  Rails.root.join('public', 'uploads', imageFileName)
-				File.rename(file, newFileName)
+    result = []
+    @questions.each do |quest|
+      cat = Category.find(quest.category_id) rescue nil
+      # Ignore this question if it doesn't belong to a category
+      next unless cat
 
-				#save details about the image in media_files
-				@mfiles = MediaFile.create(
-					media_type: 'img',
-					ref: imageFileName
-				)
-				@mfiles.save
+      questionnaire = Questionnaire.find(cat.questionnaire_id_id) rescue nil
+      # Ignore this category if it doesn't belong to a questionnaire
+      next unless questionnaire
 
-				#get the id of the inserted mediafile
-				@imgid = MediaFile.last.id
-				#save the img to the question
-				@quest = Question.find(@qid)
-				@quest.question_image = @imgid
-				@quest.save
+      result << {
+        id: quest.id,
+        name: quest.name,
+        cat_name: cat.name,
+        quest_name: questionnaire.name
+      }
+    end
 
-				@medRes = MediaFile.find(@imgid)
-				render json: @medRes
-			end
-		else
+    render json: result
+  end
 
-		end
-		#end
-	end
+  private
 
-	def uploadAudio
-		if params[:question_audio]
-			@questImg = params[:question_audio]
-			@qid = params[:question][:id]
+  # definierar vilka parametrar som är tillåtna för question
+  def question_params
+    params.require(:question).permit(:name, :text, :response_id)
+  end
 
-			#upload image file to the uploads folder
-			File.open(Rails.root.join('public', 'uploads',
-			@questImg.original_filename), 'wb') do |file|
-				file.write(@questImg.read)
-				@media_path = File.basename(file.path)
-				#save details about the image in media_files
-				currTime = Time.now.to_i
-				audioFileName = 'audio_' + currTime.to_s + File.extname(file)
-				#rename the uploaded file
-				newFileName =  Rails.root.join('public', 'uploads', audioFileName)
-				File.rename(file, newFileName)
-
-				@mfiles = MediaFile.create(
-					media_type: 'audio',
-					ref: audioFileName
-				)
-				@mfiles.save
-				#get the id of the inserted mediafile
-				@imgid = MediaFile.last.id
-				#save the img to the question
-				@quest = Question.find(@qid)
-				@quest.question_audio = @imgid
-				@quest.save
-
-				@medRes = MediaFile.find(@imgid)
-				render json: @medRes
-			end
-				#render plain: @questImg.inspect
-		else
-
-		end
-	end
-
-	def destroy
-		@question = Question.find(params[:id])
-		@question.destroy
-
-		feedback = {
-			'status' => 'destroyed',
-			'id' => params[:id]
-		}
-		#redirect_to questions_path
-		render json: feedback
-	end
-
-	def list
-		@questions = Question.all
-
-		result = []
-		@questions.each do |quest|
-			cat = Category.find(quest.category_id) rescue nil
-			# Ignore this question if it doesn't belong to a category
-			next unless cat
-
-			questionnaire = Questionnaire.find(cat.questionnaire_id_id) rescue nil
-			# Ignore this category if it doesn't belong to a questionnaire
-			next unless questionnaire
-
-			result << {
-				id: quest.id,
-				name: quest.name,
-				cat_name: cat.name,
-				quest_name: questionnaire.name
-			}
-		end
-
-		render json: result
-	end
-
-	private
-		#definierar vilka parametrar som är tillåtna för question
-		def question_params
-			params.require(:question).permit(:name, :text, :response_id)
-		end
-
-		#permitted params for media_files
-		def media_file_params
-			params.require(:media_files).permit(:media_type, :ref, :image_file)
-		end
+  # permitted params for media_files
+  def media_file_params
+    params.require(:media_files).permit(:media_type, :ref, :image_file)
+  end
 end

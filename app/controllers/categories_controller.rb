@@ -1,187 +1,179 @@
 class CategoriesController < ApplicationController
-	protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
-	#respond_to :json, :xml, :html, :js
+  protect_from_forgery with: :null_session,
+                       if: proc { |c| c.request.format == 'application/json' }
+  # respond_to :json, :xml, :html, :js
 
-	def index
-		@questid = params[:questionnaire_id]
-	end
+  def index
+    @questid = params[:questionnaire_id]
+  end
 
-	def update
-		@category = Category.find(params[:id])
+  def update
+    @category = Category.find(params[:id])
 
-		if @category.update(category_params)
-			redirect_to questionnaires_path
-		else
-			render 'edit'
-		end
-	end
+    if @category.update(category_params)
+      redirect_to questionnaires_path
+    else
+      render 'edit'
+    end
+  end
 
-	def updateOrder
-		@category = Category.find(params[:id])
-		@order = params[:questOrder]
+  def update_order
+    @category = Category.find(params[:id])
+    @order = params[:questOrder]
 
-		v = 1
-		for i in @order do
-			#strtest << "Question %s in position %s" % [i, v]
-			q = Question.find(i)
+    v = 1
+    for i in @order do
+      # strtest << "Question %s in position %s" % [i, v]
+      q = Question.find(i)
 
-			q.order = v
-			q.category_id = params[:id]
-			q.save
-			v = v + 1
-		end
+      q.order = v
+      q.category_id = params[:id]
+      q.save
+      v += 1
+    end
 
-		#@category = Category.find(params[:questOrder])
-		#render :json => @category.inspect
+    # @category = Category.find(params[:questOrder])
+    # render :json => @category.inspect
 
-		respond_to do |format|
-  			format.json { render json: @order }
-  			#format.html {render json: @category }
- 		end
-	end
+    respond_to do |format|
+      format.json { render json: @order }
+      # format.html {render json: @category }
+    end
+  end
 
-	def uploadImage
-		@imgf = params[:category_image]
-		@cid = params[:category][:id]
+  def upload_image
+    @img_file = params[:category_image]
+    @c_id = params[:category][:id]
 
-		if @imgf != nil
-			File.open(Rails.root.join('public', 'uploads',
-				@imgf.original_filename), 'wb') do |file|
-					file.write(@imgf.read)
-					@media_path = File.basename(file.path) #file.path
+    if !@img_file.nil?
+      File.open(Rails.root.join('public', 'uploads',
+                                @img_file.original_filename), 'wb') do |file|
+        file.write(@img_file.read)
+        @media_path = File.basename(file.path) # file.path
+        now_time = Time.now.to_i
+        image_file_name = 'image_' + now_time.to_s + File.extname(file)
+        # rename the uploaded file
+        new_file_name = Rails.root.join('public', 'uploads', image_file_name)
+        File.rename(file, new_file_name)
+        # render text: @media_path
+        @media_files = MediaFile.create(
+          media_type: 'img',
+          ref: image_file_name
+        )
+        @media_files.save
+        # get the id of the inserted mediafile
+        @img_id = MediaFile.last.id
+        # save the img to the question
+        @cat = Category.find(@c_id)
+        @cat.image = @img_id
+        @cat.save
+        @media_res = MediaFile.find(@img_id)
+        render json: @media_res
+      end
+    else
+      render plain: 'Error'
+    end
+    # render plain: params.inspect
+  end
 
+  def upload_audio
+    @audio_file = params[:category_audio]
+    @c_id = params[:category][:id]
 
-					currTime = Time.now.to_i
-					imageFileName = 'image_' + currTime.to_s + File.extname(file)
-					#rename the uploaded file
-					newFileName =  Rails.root.join('public', 'uploads', imageFileName)
-					File.rename(file, newFileName)
+    if !@audio_file.nil?
+      File.open(Rails.root.join('public', 'uploads',
+                                @audio_file.original_filename), 'wb') do |file|
+        file.write(@audio_file.read)
+        @media_path = File.basename(file.path)
+        now_time = Time.now.to_i
+        audio_file_name = 'audio_' + now_time.to_s + File.extname(file)
+        # rename the uploaded file
+        new_file_name = Rails.root.join('public', 'uploads', audio_file_name)
+        File.rename(file, new_file_name)
+        @media_files = MediaFile.create(
+          media_type: 'audio',
+          ref: audio_file_name
+        )
+        @media_files.save
+        @audio_id = MediaFile.last.id
+        @cat = Category.find(@c_id)
+        @cat.audio = @audio_id
+        @cat.save
+        @media_res = MediaFile.find(@audio_id)
+        render json: @media_res
+      end
+    else
+      render plain: 'Nothing to upload '
+    end
+    # render plain: params.inspect
+  end
 
-					#render text: @media_path
-					@mfiles = MediaFile.create(
-						media_type: 'img',
-						ref: imageFileName
-					)
-					@mfiles.save
-					#get the id of the inserted mediafile
-					@imgid = MediaFile.last.id
-					#save the img to the question
-					@cat = Category.find(@cid)
-					@cat.image = @imgid
-					@cat.save
+  def add_new_question_to_category
+    @quest = Question.new
+    @last_quest = Question.where(category_id: params[:catid]).order(order: :desc).first
+    @quest.category_id = params[:catid]
+    @catid = params[:catid]
+    @resp_opts = ResponseOption.all
+    # need to set order value as well
+    if @last_quest
+      @quest.order = @last_quest.order + 1
+    else
+      @quest.order = 1
+    end
 
-					@medRes = MediaFile.find(@imgid)
-					render json: @medRes
-				end
-		else
-			render plain: "Error"
-		end
-		#render plain: params.inspect
-	end
+    @quest.save
 
-	def uploadAudio
-		@audFile = params[:category_audio]
-		@cid = params[:category][:id]
+    response = {
+      'quest' => @quest.to_json,
+      'catid' => @catid,
+      'questid' => Category.find(params[:catid]).questionnaire_id_id,
+      'response_options' => @resp_opts
+    }
 
-		if @audFile != nil
-			File.open(Rails.root.join('public', 'uploads',
-				@audFile.original_filename), 'wb') do |file|
-					file.write(@audFile.read)
-					@media_path = File.basename(file.path)
+    render json: response
+  end
 
-					currTime = Time.now.to_i
-					audioFileName = 'audio_' + currTime.to_s + File.extname(file)
-					#rename the uploaded file
-					newFileName =  Rails.root.join('public', 'uploads', audioFileName)
-					File.rename(file, newFileName)
+  def destroy
+    delete_category(params[:id])
+  end
 
-					@mfiles = MediaFile.create(
-						media_type: 'audio',
-						ref: audioFileName
-					)
-					@mfiles.save
+  def list
+    @categories = Category.all
 
-					@audid = MediaFile.last.id
-					@cat = Category.find(@cid)
-					@cat.audio = @audid
-					@cat.save
+    result = []
+    @categories.each do |cat|
+      quest = Questionnaire.find(cat.questionnaire_id_id) rescue nil
 
-					@medRes = MediaFile.find(@audid)
-					render json: @medRes
-				end
-		else
-			render plain: "Nothing to upload "
-		end
-		#render plain: params.inspect
-	end
+      # Ignore this category if it doesn't belong to a questionnaire
+      next unless quest
 
-	def addNewQuestionToCategory
-		@quest = Question.new
-		@lastQuest = Question.where(category_id: params[:catid]).order(order: :desc).first
-		@quest.category_id  = params[:catid]
-		@catid = params[:catid]
-		@respOpts = ResponseOption.all
-		#need to set order value as well
-		if @lastQuest
-			@quest.order = @lastQuest.order + 1
-		else
-			@quest.order = 1
-		end
+      result << {
+        id: cat.id,
+        name: cat.name,
+        quest_name: quest.name
+      }
+    end
 
-		@quest.save
+    render json: result
+  end
 
-		response = {
-			'quest' => @quest.to_json,
-			'catid' => @catid,
-			'questid' => Category.find(params[:catid]).questionnaire_id_id,
-			'response_options' => @respOpts
-		}
+  private
 
-		render json: response
-	end
+  def category_params
+    params.require(:category).permit(:name, :description)
+  end
 
-	def destroy
-		deleteCategory(params[:id])
-	end
+  def delete_category(id)
+    # Questions that belongs to the category
+    questions = Question.where(category_id: id)
+    questions.each(&:destroy)
 
-	def list
-		@categories = Category.all
+    category = Category.find(id)
+    category.destroy
 
-		result = []
-		@categories.each do |cat|
-			quest = Questionnaire.find(cat.questionnaire_id_id) rescue nil
-
-			# Ignore this category if it doesn't belong to a questionnaire
-			next unless quest
-
-			result << {
-				id: cat.id,
-				name: cat.name,
-				quest_name: quest.name
-			}
-		end
-
-		render json: result
-	end
-
-	private
-		def category_params
-			params.require(:category).permit(:name, :description)
-		end
-
-
-		def deleteCategory(id)
-			#Questions that belongs to the category
-			questions = Question.where(category_id: id)
-			questions.each do |q|
-				q.destroy
-			end
-
-			category = Category.find(id)
-			category.destroy
-
-			#Send some feedback
-			feedback = {'status' => 'removed', 'id' => params[:id], 'questions' => questions.to_json }
-			render json: feedback
-		end
+    # Send some feedback
+    feedback = { 'status' => 'removed', 'id' => params[:id],
+                 'questions' => questions.to_json }
+    render json: feedback
+  end
 end
