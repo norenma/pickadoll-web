@@ -74,7 +74,6 @@ class QuestionnairesController < ApplicationController
     @questionnaire = Questionnaire.find(params[:id])
     @categories = Category.where(questionnaire_id_id: params[:id]).order(order: :asc)
     @cat_ids = []
-    logger.debug "\nediting: #{@questionnaire.inspect}"
 
     @categories.each do |c|
       @cat_ids.push c.id
@@ -104,8 +103,6 @@ class QuestionnairesController < ApplicationController
   end
 
   def clone
-    logger.info "Cloning questionnaire: \n#{@questionnaire.to_yaml}"
-
     @qid = params[:id]
     @questionnaire = Questionnaire.find(@qid)
     @categories = Category.where(questionnaire_id_id: @qid).order(order: :asc)
@@ -113,6 +110,7 @@ class QuestionnairesController < ApplicationController
     # Copy questionnaire
     @new_questionnaire = @questionnaire.dup
     @new_questionnaire.name = "Kopia av #{@new_questionnaire.name}"
+    @new_questionnaire.user_id = session[:user_id] # Make current user the owner
     @new_questionnaire.save
 
     @categories.each do |c|
