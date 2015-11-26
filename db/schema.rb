@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151121104403) do
+ActiveRecord::Schema.define(version: 20151123133038) do
 
   create_table "answers", force: true do |t|
     t.string   "tester_id"
@@ -96,6 +96,18 @@ ActiveRecord::Schema.define(version: 20151121104403) do
     t.boolean  "availability"
     t.integer  "owned_by_question"
   end
+
+  create_table "rights", force: true do |t|
+    t.integer  "level"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "questionnaire_id"
+    t.integer  "subject_id"
+  end
+
+  add_index "rights", ["questionnaire_id"], name: "index_rights_on_questionnaire_id", using: :btree
+  add_index "rights", ["user_id"], name: "index_rights_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "username"

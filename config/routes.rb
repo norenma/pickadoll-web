@@ -7,6 +7,8 @@ Rails.application.routes.draw do
         resources :media_files
       end
     end
+
+    resources :rights
   end
 
   resources :answers
@@ -55,6 +57,9 @@ Rails.application.routes.draw do
   delete 'response_options/deleteItem/:id', to: 'response_options#delete_response_option_item'
 
   post 'response_options/edit', to: 'response_options#edit'
+
+  # for rights
+  # get 'questionnaires/:id/rights/new', to: 'rights#new', as: 'new_right'
 
   root to: 'sessions#login'
   get 'sessions/login'

@@ -1,0 +1,14 @@
+<% @page_title = "Pickadoll | Dela enkät" %>
+<%= stylesheet_link_tag "application.css" %>
+
+<h1><%= "Dela #{@questionnaire.name}" %></h1>
+
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
+
+<%= render 'form' %>
+
+<p>
+  <%= link_to 'Tillbaka till enkät', edit_questionnaire_path(@questionnaire.id) %>
+</p>

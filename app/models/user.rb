@@ -21,16 +21,21 @@ class User < ActiveRecord::Base
 
   # Authenticate user login
   def self.authenticate(username_or_email = '', login_password = '')
-    if EMAIL_REGEX.match(username_or_email)
-      user = User.find_by_email(username_or_email)
-    else
-      user = User.find_by_username(username_or_email)
-    end
+    user = by_username_or_email(username_or_email)
 
     if user && user.match_password(login_password)
       return user
     else
       return false
+    end
+  end
+
+  # Find a user by username or email
+  def self.by_username_or_email(username_or_email = '')
+    if EMAIL_REGEX.match(username_or_email)
+      User.find_by_email(username_or_email)
+    else
+      User.find_by_username(username_or_email)
     end
   end
 

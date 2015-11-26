@@ -1,0 +1,31 @@
+<%= form_for [@questionnaire, @right] do |f| %>
+  <% if @right.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@right.errors.count, "error") %> prohibited this right from being saved:</h2>
+
+      <ul>
+      <% @right.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :questionnaire_id, value: @questionnaire.id %>
+
+	<p>
+    <%= f.label 'Användarnamn eller email:' %> <br/>
+    <%= text_field_tag :username_or_email %>
+  </p>
+
+  <% if (@active_user_right && @active_user_right.level == :rw) || @questionnaire.user_id == @curr_user.id %>
+  	<p>
+      <%= check_box_tag :write_permission %>
+      <%= f.label 'Ge skrivrättigheter' %>
+    </p>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit 'Dela enkät' %>
+  </div>
+<% end %>

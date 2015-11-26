@@ -449,7 +449,7 @@ questionnaireInit = (e) ->
 	$('.audioUploadForm input').on "change", uploadQuestAudio
 
 	#make the categories sortable
-	$(".category-questions" ).sortable({
+	$(".draggable-category-questions" ).sortable({
 		handle: '.question-name'
 		placeholder: 'question-drop-placeholder'
 		connectWith: '.category-questions'
@@ -458,7 +458,7 @@ questionnaireInit = (e) ->
 
 	$( ".category-questions").disableSelection()
 
-	$('.survey-content').sortable({
+	$('.draggable-survey-content').sortable({
 		handle: '.category-bar'
 		placeholder : {
 			element: (clone, ui) ->

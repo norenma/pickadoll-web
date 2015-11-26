@@ -210,10 +210,6 @@ body {
 			}
 		}
 
-		.question-name:hover {
-			cursor: move;
-		}
-
 		.editing {
 			.question-content {
 				display: block;
@@ -225,7 +221,8 @@ body {
 			height: 30px;
 		}
 	}
-	.category-bar:hover {
+
+	.moveable:hover {
 		cursor: move;
 	}
 
@@ -415,4 +412,26 @@ button:focus, input[type="button"]:focus {
 button:hover, input[type="button"]:hover {
 	text-decoration: underline;
 	cursor: pointer;
+}
+
+.questionnaire-name-uneditable {
+	font-size: 2em;
+	margin: 0.25em;
+}
+
+.questionnaire-description-uneditable {
+	margin: 0.25em;
+}
+
+.uneditable-title-large {
+	font-size: 1.35em;
+	margin: 0.25em;
+}
+
+.uneditable-title {
+	margin: 0.5em;
+}
+
+.uneditable-text {
+	margin: 0.5em 0;
 }

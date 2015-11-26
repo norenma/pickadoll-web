@@ -1,26 +1,27 @@
 class QuestionnairesController < ApplicationController
   def index
-    @questionnaires = Questionnaire.where(user_id: session[:user_id])
+    @questionnaires = questionnaires_for_user_with_id(session[:user_id])
 
     @answers = Answer.select("questionnaire as questionnaire_id, COUNT(id) as numberOfAnswers,
       MAX(answer_time) as lastAnswerTime").where(user: session[:user_id]).group('questionnaire')
-
-    @questionnaireData = []
-    # ful-lösning pga kass struktur på grejer
-    @questionnaires.each do |q|
-      @questionnaireData.push('id' => q.id,
-                              'name' => q.name,
-                              'description' => q.description,
-                              'owner' => User.where(id: q.user_id).pluck(:username),
-                              'numberOfAnswers' => Answer.select('COUNT(id) as numberOfAnswers').where(questionnaire: q.id),
-                              'created_at' => q.created_at)
-    end
-    # @questionnairesWithResults = Questionnaire.find()
 
     if authenticate_user
       @curr_user = User.find(session[:user_id])
       @username = @curr_user.username
     end
+
+    @questionnaire_data = []
+    # ful-lösning pga kass struktur på grejer
+    @questionnaire_data = @questionnaires.map do |q|
+      { id: q.id,
+        name: q.name,
+        description: q.description,
+        owner: User.where(id: q.user_id).pluck(:username),
+        owned_by_user: q.user_id == @curr_user.id,
+        number_of_answers: Answer.select('COUNT(id) as number_of_answers').where(questionnaire: q.id),
+        created_at: q.created_at }
+    end
+    # @questionnairesWithResults = Questionnaire.find()
   end
 
   def new
@@ -42,11 +43,25 @@ class QuestionnairesController < ApplicationController
   end
 
   def show
-    @questionnaires = Questionnaire.find(params[:id])
+    @questionnaire = Questionnaire.find(params[:id])
+    @questionnaire_id = @questionnaire.id
+
+    @categories = Category.where(questionnaire_id_id: @questionnaire.id).order(order: :asc)
+    @cat_ids = @categories.map(&:id)
+
+    @questions = Question.where(category_id: @cat_ids).order(order: :asc)
+
+    @response_options = ResponseOption.all
+
+    if authenticate_user
+      @curr_user = User.find(session[:user_id])
+      @username = @curr_user.username
+    end
+
     respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @questionnaires }
-      format.xml { render xml: @questionnaires }
+      format.html { render :show }
+      format.json { render json: @questionnaire }
+      format.xml { render xml: @questionnaire }
     end
   end
 
@@ -72,16 +87,15 @@ class QuestionnairesController < ApplicationController
 
   def edit
     @questionnaire = Questionnaire.find(params[:id])
-    @categories = Category.where(questionnaire_id_id: params[:id]).order(order: :asc)
-    @cat_ids = []
+    @questionnaire_id = @questionnaire.id
 
-    @categories.each do |c|
-      @cat_ids.push c.id
-    end
+    user_right = user_right_to_questionnaire(session[:user_id], @questionnaire.id)
+    redirect_to questionnaire_path(@questionnaire.id) unless user_right == :rw
+
+    @categories = Category.where(questionnaire_id_id: @questionnaire.id).order(order: :asc)
+    @cat_ids = @categories.map(&:id)
 
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
-
-    @questionnaire_id = @questionnaire.id
 
     @response_options = ResponseOption.all
 
@@ -92,6 +106,7 @@ class QuestionnairesController < ApplicationController
       @curr_user = User.find(session[:user_id])
       @username = @curr_user.username
     end
+
     # render plain: @questionnaire.inspect
   end
 
@@ -150,14 +165,11 @@ class QuestionnairesController < ApplicationController
 
   def update_category_order
     @cat_order = params[:catOrder]
-    v = 1
-    for i in @cat_order do
-      # strtest << "Question %s in position %s" % [i, v]
-      c = Category.find(i)
 
-      c.order = v
+    @cat_order.each_with_index do |e, i|
+      c = Category.find(e)
+      c.order = i
       c.save
-      v += 1
     end
 
     render json: @cat_order
@@ -239,6 +251,26 @@ class QuestionnairesController < ApplicationController
   def questionnaire_params
     # params.require(:question).permit(:name, :text, :media_files)
     params.require(:questionnaire).permit(:name, :description)
+  end
+
+  def user_right_to_questionnaire(user_id, questionnaire_id)
+    # Check if questionnaire is owned by user
+    questionnaire = Questionnaire.find(questionnaire_id)
+    return :rw if questionnaire.user_id == user_id
+
+    # Otherwise, check if user has a right to read/write questionnaire
+    right = Right.where(subject_id: user_id, questionnaire_id: questionnaire_id).first
+    return right.level if right
+
+    nil
+  end
+
+  def questionnaires_for_user_with_id(user_id)
+    owned_questionnaires = Questionnaire.where(user_id: session[:user_id])
+    right_questionnaires = Right.where(subject_id: user_id).map do |r|
+      Questionnaire.find(r.questionnaire_id)
+    end
+    owned_questionnaires | right_questionnaires
   end
 
   def last_category_order_for_id(id)

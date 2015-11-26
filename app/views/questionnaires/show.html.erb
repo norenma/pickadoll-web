@@ -1,0 +1,160 @@
+<% @page_title = "Pickadoll | Enkäter" %>
+<%= stylesheet_link_tag "application.css" %>
+
+<div id="quest-header" class="page-header">
+	<p class="home-btn"><%= link_to image_tag("portal_menu_btn.png", alt: "Home button"), questionnaires_path %></p>
+	<ul class="user-info-list">
+		<li><img src="/assets/user_male-32.png"> <%= @username %> </li>
+		<li><%= link_to "Logga ut", sessions_logout_path %></li>
+		<li><%= link_to "Dela enkäten ...", new_questionnaire_right_path(@questionnaire.id) %></li>
+	</ul>
+
+  <p class="questionnaire-name-uneditable"><%= @questionnaire.name %></p>
+  <p class="questionnaire-description-uneditable"><%= @questionnaire.description %></p>
+
+</div>
+
+<div id="quest-content">
+  <ul class="survey-content" >
+
+    <% @categories.each do |c| %>
+  		<li class="category">
+  			<div class="category-bar" >
+  				<!-- , html: {multipart: true} -->
+  				<div class="category-name">
+            <p class="uneditable-title-large"><%= c.name %></p>
+  				</div>
+
+  				<div class="toolbar">
+  					<ul>
+  						<li><a href="#" class="edit-btn">
+  							<%= image_tag("edit-50.png", alt: "Edit button") %>
+  						</a></li>
+  					</ul>
+  				</div>
+
+  				<div class="category-content">
+  					<div class="category-text-holder">
+  						<label>Kategoritext</label>
+              <p class="uneditable-text"><%= c.description %></p>
+  					</div>
+
+  					<div class="category-image-holder">
+  						<label>Bild</label>
+              <div>
+    						<% if c.image %>
+    							<% if c.image != 0 %>
+    							<% @catImg = MediaFile.find(c.image) %>
+
+    							<img src="/uploads/<%= @catImg.ref %>" alt="Bild för kategori " class="catImg"/>
+    							<% end %>
+    						<% end %>
+              </div>
+  					</div>
+
+  					<div class="category-audio-holder">
+  						<label>Ljud</label>
+              <div>
+    						<% if c.audio %>
+    							<% @catAud = MediaFile.find(c.audio) %>
+    							<audio controls="controls" class="audioPlayer" src="/uploads/<%= @catAud.ref %>">
+    							</audio>
+    						<% end %>
+              </div>
+  					</div>
+  				</div>
+  			</div>
+
+  			<ul class="category-questions" >
+  			<% catquest = @questions.where(category_id: c.id) %>
+
+  			<% catquest.each do |q| %>
+  				<li class="question-bar">
+
+  					<div class="question-name">
+              <p class="uneditable-title"><%= q.name %></p>
+  					</div>
+  					<!-- Content for other stuff -->
+  					<div class="toolbar">
+  						<ul>
+  							<li><a href="#" class="edit-btn">
+  								<%= image_tag("edit-50.png", alt: "Edit button") %>
+  							</a></li>
+  						</ul>
+  					</div>
+
+  					<div class="question-content">
+  						<div class="questionText">
+  							<label>Frågetext</label>
+                <p class="uneditable-text"><%= q.text %></p>
+  						</div>
+
+  						<div class="questionImg">
+                <label>Bild</label>
+  							<div class="questionImgWrapper">
+  								<% if q.question_image %>
+  									<% imgFile = MediaFile.find(q.question_image) %>
+  									<% if imgFile  %>
+  										<img src="/uploads/<%= imgFile.ref%>" >
+  									<% end %>
+  								<% end %>
+  							</div>
+  						</div>
+
+  						<div class="questionAudio">
+                <label>Ljud</label>
+  							<div class="questionAudioPlayer">
+  								<% if q.question_audio %>
+    								<% audio_file = MediaFile.find(q.question_audio) %>
+    								<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
+  								<% end %>
+  							</div>
+  						</div>
+
+  						<div class="questionOptions">
+  							<label>Svarsalternativ</label>
+								<%
+                  if q.response_id
+                    option = ResponseOption.find(q.response_id)
+                    option_items = ResponseOptionItem.where(response_option_id: option.id)
+                %>
+              		<table>
+              			<p class="uneditable-text"><%= option.name %></p>
+
+              			<thead>
+              				<tr>
+              					<th>Svarsvärde </th>
+              					<th>Svarstext</th>
+              					<th>Ljudfil</th>
+              				</tr>
+              			</thead>
+
+              			<tbody id="editResponseOptionTBody">
+                    <% option_items.each do |item| %>
+              				<tr class="respOptInput">
+              					<td><%= item.value %></td>
+              					<td><%= item.label %></td>
+              					<td>
+          								<% if item.audio %>
+            								<% audio_file = MediaFile.find(item.audio) %>
+            								<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
+          								<% end %>
+              					</td>
+              				</tr>
+                    <% end %>
+              			</tbody>
+              		</table>
+                <% end %>
+
+  						</div>
+  					</div>
+  				</li>
+  			<% end %>
+
+  			</ul>
+  		</li>
+  	<!-- End of the categories loop -->
+  	<% end %>
+
+  </ul>
+</div>
