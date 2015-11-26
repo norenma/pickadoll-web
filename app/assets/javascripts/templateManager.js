@@ -184,7 +184,10 @@ function addNewResponseOptionSet (e) {
 	$.ajax({
 		type: 'POST',
 		url: '/response_options',
-		data: {question_id : window.showingForQuestion},
+		data: {
+			question_id : window.showingForQuestion,
+			questionnaire_id : $(e.target).attr('data-questionnaireid')
+			},
 		success: function (data) {
 			// console.log(data);
 			loadResponseOptionMenu();

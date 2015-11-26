@@ -173,8 +173,9 @@
 							<div class = "questionOptionsForm">
 								<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
 					remote: true, html: {multipart: true, class: 'changes'} do |f| %>
+								<% visible_response_options = @response_options.select { |r| r.question_id == q.id || r.availability || q.response_id == r.id } %>
 								<%=
-									collection_select(:question, :response_id, @response_options, :id, :name, {prompt:true, selected: q.response_id}, {class: 'response_option_select'} )
+									collection_select(:question, :response_id, visible_response_options, :id, :name, {prompt:true, selected: q.response_id}, {class: 'response_option_select',  'data-question-id' => q.id } )
 								%>
 						</div>
 
@@ -242,7 +243,7 @@
 				<option value="0">Välj ett svarsalternativ</option>
 			</select>
 
-			<input type="button" value="Ny svarsuppsättning" class="newResponseOptionSet" />
+			<input type="button" value="Ny svarsuppsättning" class="newResponseOptionSet" data-questionnaireid="<%= @questionnaire.id %>" />
 		</form>
 
 		<div id="respEditDetailed">
@@ -372,7 +373,7 @@
 					</div>
 
 
-					<select class="response_option_select" id="question_response_id" name="question[response_id]">
+					<select class="response_option_select" id="question_response_id" name="question[response_id]" data-question-id="[%= id %]">
 						[% _.each(response_options, function (option) { %]
 							<option value="[%= option.id %]">[%= option.name %]</option>
 						[% }); %]

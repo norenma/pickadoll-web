@@ -21,7 +21,8 @@ class ResponseOptionsController < ApplicationController
     response_option = ResponseOption.new
     response_option.name = 'Ny uppsättning'
     response_option.availability = false
-    response_option.owned_by_question = params[:question_id]
+    response_option.question_id = params[:question_id]
+    response_option.questionnaire_id = params[:questionnaire_id]
 
     response_option.save
 
@@ -139,8 +140,17 @@ class ResponseOptionsController < ApplicationController
   end
 
   def list
-    @response_options = ResponseOption.all
-    render json: @response_options
+    @response_options = ResponseOption.visible_response_options(session[:user_id])
+
+    response_options_json = @response_options.map do |r|
+      { id: r.id,
+        name: r.name,
+        availability: r.availability,
+        question_id: r.question_id,
+        used_by: Question.where(response_id: r.id).map(&:id).uniq }
+    end
+
+    render json: response_options_json
   end
 
   def by_id
@@ -153,7 +163,7 @@ class ResponseOptionsController < ApplicationController
       'id' => @resp_data.id,
       'name' => @resp_data.name,
       'availability' => @resp_data.availability,
-      'owned_by_question' => @resp_data.owned_by_question,
+      'question_id' => @resp_data.question_id,
       'options' => @options.to_json
     }
 
@@ -195,6 +205,6 @@ class ResponseOptionsController < ApplicationController
   # definierar vilka parametrar som är tillåtna för response_option
   def resp_params
     params.require(:response_option).permit(
-      :name, :availability, :owned_by_question, :opts, :respVal, :respLbl)
+      :name, :availability, :question_id, :opts, :respVal, :respLbl)
   end
 end

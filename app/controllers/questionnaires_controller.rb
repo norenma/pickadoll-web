@@ -1,6 +1,6 @@
 class QuestionnairesController < ApplicationController
   def index
-    @questionnaires = questionnaires_for_user_with_id(session[:user_id])
+    @questionnaires = Questionnaire.for_user_with_id(session[:user_id])
 
     @answers = Answer.select("questionnaire as questionnaire_id, COUNT(id) as numberOfAnswers,
       MAX(answer_time) as lastAnswerTime").where(user: session[:user_id]).group('questionnaire')
@@ -51,7 +51,7 @@ class QuestionnairesController < ApplicationController
 
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
 
-    @response_options = ResponseOption.all
+    @response_options = ResponseOption.visible_response_options(session[:user_id])
 
     if authenticate_user
       @curr_user = User.find(session[:user_id])
@@ -97,7 +97,7 @@ class QuestionnairesController < ApplicationController
 
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
 
-    @response_options = ResponseOption.all
+    @response_options = ResponseOption.visible_response_options(session[:user_id])
 
     # if you want to create a new response option
     @response_option = ResponseOption.new
@@ -238,6 +238,11 @@ class QuestionnairesController < ApplicationController
       q.save
     end
 
+    # Let response option be shown everywhere (since it is selected for all)
+    @response_option = ResponseOption.find(response_option_id)
+    @response_option.availability = true
+    @response_option.save
+
     response = {
       'questionnaireId' => questionnaire_id,
       'responseOptionId' => response_option_id
@@ -263,14 +268,6 @@ class QuestionnairesController < ApplicationController
     return right.level.to_sym if right
 
     nil
-  end
-
-  def questionnaires_for_user_with_id(user_id)
-    owned_questionnaires = Questionnaire.where(user_id: user_id)
-    right_questionnaires = Right.where(subject_id: user_id).map do |r|
-      Questionnaire.find(r.questionnaire_id)
-    end
-    owned_questionnaires | right_questionnaires
   end
 
   def last_category_order_for_id(id)

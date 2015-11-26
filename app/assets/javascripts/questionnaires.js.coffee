@@ -67,6 +67,7 @@ window.handleChangeOnInput = handleChangeOnInput = (e) ->
 			complete: (x, t) ->
 				console.log "Saved"
 				updateResponseOptionAudio e
+				updateResponseOptionSelectors()
 	if stoppedInput
 		clearTimeout window.stoppedInput
 
@@ -258,14 +259,14 @@ window.loadResponseOptionMenu = loadResponseOptionMenu = () ->
 		'url' : '/response_options/list/all'
 		'success' : (data) ->
 			res = data
-			#console.log res
+			# console.log res
 
 			$('#respOptionsEditDropdown').html('<option ="0">Välj svarsalternativ</option>')
 			for opt in res
 				do (opt) ->
 					# console.log opt
-					# console.log "Checking id " + window.showingForQuestion + ", owner " + opt.owned_by_question + " and availability " + opt.availability
-					if window.showingForQuestion && (window.showingForQuestion == "#{opt.owned_by_question}" || opt.availability) # Show only the question's set
+					# console.log "Checking id " + window.showingForQuestion + ", owner " + opt.question_id + " and availability " + opt.availability
+					if window.showingForQuestion && (window.showingForQuestion == "#{opt.question_id}" || opt.availability) # Show only the question's set
 						$('#respOptionsEditDropdown').append '<option value="' + opt.id + '">' + opt.name + '</option>'
 					else if !window.showingForQuestion # Show everything
 						$('#respOptionsEditDropdown').append '<option value="' + opt.id + '">' + opt.name + '</option>'
@@ -273,6 +274,34 @@ window.loadResponseOptionMenu = loadResponseOptionMenu = () ->
 	})
 
 	$('#respOptionsEditDropdown').off().on 'change', loadResponseOptionEdit
+#end
+
+# Function for updating all response option selectors in questions
+window.updateResponseOptionSelectors = updateResponseOptionSelectors = () ->
+	# console.log "updateResponseOptionSelectors"
+	$.ajax({
+		'url' : '/response_options/list/all'
+		'success' : (data) ->
+			res = data
+			# console.log res
+
+			$('.response_option_select').each ->
+				question_id = $(this).attr('data-question-id')
+				selector = $(this)
+				selector.html('<option value>Välj svarsalternativ</option>')
+
+				for opt in res
+					do (opt) ->
+						# console.log opt
+						# console.log "Checking id " + question_id + ", owner " + opt.question_id + " and availability " + opt.availability
+						if parseInt(question_id) in opt.used_by # Option set is selected for this question
+							selector.append '<option selected="selected" value="' + opt.id + '">' + opt.name + '</option>'
+						else if question_id == "#{opt.question_id}" || opt.availability # Show only the question's set
+							selector.append '<option value="' + opt.id + '">' + opt.name + '</option>'
+				#end of for
+	})
+
+	$('.response_option_select').off().on 'change', responseOptionSelected
 #end
 
 #Function for loading the dropdown menu for the response options
@@ -364,14 +393,9 @@ window.responseOptionForAllSelected = responseOptionForAllSelected = (e) ->
 	$.post '/questionnaires/' + questionnaireId + '/setResponseOptionForAllQuestions/',
 		responseOption: val,
 		(data) ->
-			selects = $('.response_option_select')
-			$('.response_option_select').val(data.responseOptionId)
+			updateResponseOptionSelectors()
 
 #end of setResponseOptionForAll
-
-# Function for updating the response option selector in a question
-window.updateResponseOptionSelector = updateResponseOptionSelector = (e) ->
-	console.log e
 
 
 #Function to call when the page is loaded
