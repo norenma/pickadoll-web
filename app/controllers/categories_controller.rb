@@ -139,20 +139,29 @@ class CategoriesController < ApplicationController
 
   def list
     @categories = Category.all
+    user_id = session[:user_id]
 
     result = []
     @categories.each do |cat|
-      quest = Questionnaire.find(cat.questionnaire_id_id) rescue nil
+      questionnaire = Questionnaire.find(cat.questionnaire_id_id) rescue nil
 
       # Ignore this category if it doesn't belong to a questionnaire
-      next unless quest
+      next unless questionnaire
+
+      right = Right.where(subject_id: user_id,
+                          questionnaire_id: questionnaire.id).first
+      # Ignore this questionnaire if user has no right to see it
+      next unless questionnaire.user_id == user_id || right
 
       result << {
         id: cat.id,
         name: cat.name,
-        quest_name: quest.name
+        quest_name: questionnaire.name
       }
     end
+
+    # Sort results by questionnaire name
+    result.sort_by! { |e| e[:quest_name] }
 
     render json: result
   end

@@ -178,6 +178,7 @@ class QuestionsController < ApplicationController
 
   def list
     @questions = Question.all
+    user_id = session[:user_id]
 
     result = []
     @questions.each do |quest|
@@ -189,6 +190,11 @@ class QuestionsController < ApplicationController
       # Ignore this category if it doesn't belong to a questionnaire
       next unless questionnaire
 
+      right = Right.where(subject_id: user_id,
+                          questionnaire_id: questionnaire.id).first
+      # Ignore this questionnaire if user has no right to see it
+      next unless questionnaire.user_id == user_id || right
+
       result << {
         id: quest.id,
         name: quest.name,
@@ -196,6 +202,9 @@ class QuestionsController < ApplicationController
         quest_name: questionnaire.name
       }
     end
+
+    # Sort results by questionnaire name
+    result.sort_by! { |e| e[:quest_name] }
 
     render json: result
   end

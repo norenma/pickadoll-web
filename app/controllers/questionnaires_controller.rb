@@ -260,13 +260,13 @@ class QuestionnairesController < ApplicationController
 
     # Otherwise, check if user has a right to read/write questionnaire
     right = Right.where(subject_id: user_id, questionnaire_id: questionnaire_id).first
-    return right.level if right
+    return right.level.to_sym if right
 
     nil
   end
 
   def questionnaires_for_user_with_id(user_id)
-    owned_questionnaires = Questionnaire.where(user_id: session[:user_id])
+    owned_questionnaires = Questionnaire.where(user_id: user_id)
     right_questionnaires = Right.where(subject_id: user_id).map do |r|
       Questionnaire.find(r.questionnaire_id)
     end
