@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 	transition: all 0.1s ease-out;
 	-webkit-transition: all 0.1s ease-out;
 	padding: 0 .75em 0 .75em;
-	z-index: 40;
+	z-index: 400;
 }
 
 .user-info-list img {
