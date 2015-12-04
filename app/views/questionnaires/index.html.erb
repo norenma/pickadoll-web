@@ -36,7 +36,9 @@
 				<td><%= link_to q[:number_of_answers][0]['number_of_answers'], answer_path(q[:id]) %> </td>
 				<td><%= q[:created_at] %></td>
 				<td>
-					<%= link_to 'Kopiera', clone_questionnaire_path(q[:id]), method: :post %>
+					<% if @curr_user.create_questionnaire_permission %>
+						<%= link_to 'Kopiera', clone_questionnaire_path(q[:id]), method: :post %>
+					<% end %>
 					<% if q[:owned_by_user] %>
 						<%= link_to 'Radera', questionnaire_path(q[:id]), method: :delete, data: {
 						confirm: 'Är du säker på att du vill radera enkäten? Detta kan inte ångras.'
@@ -48,4 +50,8 @@
 	</tbody>
 </table>
 
-<p><%= link_to 'Skapa ny enkät', new_questionnaire_path %></p>
+<p>
+	<% if @curr_user.create_questionnaire_permission %>
+		<%= link_to 'Skapa ny enkät', new_questionnaire_path %>
+	<% end %>
+</p>

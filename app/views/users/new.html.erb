@@ -8,6 +8,13 @@
 	<p>Email: <br/> <%= f.text_field :email %> </p>
 	<p>Lösenord: <br/> <%= f.password_field :password %> </p>
 	<p><%= f.check_box :create_user_permission %> Ge rättigheter att skapa nya användare</p>
+	<p>
+		<% if @curr_user.create_questionnaire_permission %>
+			<%= f.check_box :create_questionnaire_permission %> Ge rättigheter att skapa nya enkäter
+		<% else %>
+			<%= f.hidden_field :create_questionnaire_permission, value: false %>
+		<% end %>
+	</p>
 
 	<%= f.submit "Skapa användare" %>
 <% end %>

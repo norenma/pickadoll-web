@@ -66,23 +66,29 @@ class QuestionnairesController < ApplicationController
   end
 
   def create
-    @questionnaire = Questionnaire.new
-    @questionnaire.name = 'Ny survey'
-    @questionnaire.user_id = session[:user_id]
-    @questionnaire.save
+    # Make sure user is allowed to create/copy questionnaires
+    @curr_user = User.find(session[:user_id]) if authenticate_user
+    if @curr_user.create_questionnaire_permission
+      @questionnaire = Questionnaire.new
+      @questionnaire.name = 'Ny survey'
+      @questionnaire.user_id = session[:user_id]
+      @questionnaire.save
 
-    @category = Category.new
+      @category = Category.new
 
-    @category.name = 'Alla'
-    # @category.description = 'Alla frågor för enkäten ' + @questionnaire.name
-    @category.questionnaire_id_id = Integer(@questionnaire[:id])
-    @category.order = 0
-    @category.image = 'img/all.png'
+      @category.name = 'Alla'
+      # @category.description = 'Alla frågor för enkäten ' + @questionnaire.name
+      @category.questionnaire_id_id = Integer(@questionnaire[:id])
+      @category.order = 0
+      @category.image = 'img/all.png'
 
-    @category.save
+      @category.save
 
-    redirect_to edit_questionnaire_path(@questionnaire.id)
-    # render plain: @questionnaire.inspect
+      redirect_to edit_questionnaire_path(@questionnaire.id)
+      # render plain: @questionnaire.inspect
+    else
+      redirect_to questionnaires_path
+    end
   end
 
   def edit
@@ -122,30 +128,34 @@ class QuestionnairesController < ApplicationController
     @questionnaire = Questionnaire.find(@qid)
     @categories = Category.where(questionnaire_id_id: @qid).order(order: :asc)
 
-    # Copy questionnaire
-    @new_questionnaire = @questionnaire.dup
-    @new_questionnaire.name = "Kopia av #{@new_questionnaire.name}"
-    @new_questionnaire.user_id = session[:user_id] # Make current user the owner
-    @new_questionnaire.save
+    # Make sure user is allowed to create/copy questionnaires
+    @curr_user = User.find(session[:user_id]) if authenticate_user
+    if @curr_user.create_questionnaire_permission
+      # Copy questionnaire
+      @new_questionnaire = @questionnaire.dup
+      @new_questionnaire.name = "Kopia av #{@new_questionnaire.name}"
+      @new_questionnaire.user_id = session[:user_id] # Make current user the owner
+      @new_questionnaire.save
 
-    @categories.each do |c|
-      # Copy category
-      new_cat = c.dup
-      new_cat.questionnaire_id_id = @new_questionnaire.id
-      new_cat.save
+      @categories.each do |c|
+        # Copy category
+        new_cat = c.dup
+        new_cat.questionnaire_id_id = @new_questionnaire.id
+        new_cat.save
 
-      questions = Question.where(category_id: c.id)
-      questions.each do |q|
-        # Copy question
-        new_quest = q.dup
-        new_quest.category_id = new_cat.id
-        new_quest.save
+        questions = Question.where(category_id: c.id)
+        questions.each do |q|
+          # Copy question
+          new_quest = q.dup
+          new_quest.category_id = new_cat.id
+          new_quest.save
+        end
+
+        new_cat.save
       end
 
-      new_cat.save
+      @new_questionnaire.save
     end
-
-    @new_questionnaire.save
 
     redirect_to questionnaires_path
   end

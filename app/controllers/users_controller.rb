@@ -40,6 +40,7 @@ class UsersController < ApplicationController
   # definierar vilka parametrar som är tillåtna för question
   def user_params
     params.require(:user).permit(
-      :username, :password, :email, :create_user_permission)
+      :username, :password, :email, :create_user_permission,
+      :create_questionnaire_permission)
   end
 end

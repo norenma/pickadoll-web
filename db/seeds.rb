@@ -10,9 +10,5 @@ user = User.find_or_initialize_by(email: 'admin@example.com')
 user.username = 'admin'
 user.password = 'password'
 user.create_user_permission = true
+user.create_questionnaire_permission = true
 user.save!
-
-other_user = User.find_or_initialize_by(email: 'user@example.com')
-other_user.username = 'user'
-other_user.password = 'password'
-other_user.save!
