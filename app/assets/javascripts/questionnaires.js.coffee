@@ -309,8 +309,11 @@ window.updateResponseOptionSelectors = updateResponseOptionSelectors = ->
 window.loadAddCategoryMenu = loadAddCategoryMenu = ->
   console.log 'loadAddCategoryMenu'
 
+  str = $('#category-search-field').val()
+
   $.ajax({
     'url' : '/categories/list/all'
+    'data' : { search_string : str }
     'success' : (data) ->
       res = data
       loadAddExistingCategoryTemplate(res)
@@ -318,13 +321,18 @@ window.loadAddCategoryMenu = loadAddCategoryMenu = ->
 #end
 
 #Function for loading the dropdown menu for the response options
-window.loadAddQuestionMenu = loadAddQuestionMenu = (e) ->
-  categoryId = e.target.getAttribute('data-categoryid')
+window.loadAddQuestionMenu = loadAddQuestionMenu = (categoryId) ->
   console.log "loadAddQuestionMenu #{categoryId}"
   console.log questionnaire_id
 
+  # Set the category id in the search field
+  $('#question-search-field').attr('data-categoryid', categoryId)
+
+  str = $('#question-search-field').val()
+
   $.ajax({
     'url' : '/questions/list/all'
+    'data' : { search_string : str }
     'success' : (data) ->
       res = data
       loadAddExistingQuestionTemplate(categoryId, res)
@@ -513,13 +521,22 @@ questionnaireInit = (e) ->
 
   $('.addExistingCategory').on 'click', (e) ->
     e.preventDefault()
+    $('#category-search-field').val('') # Reset search field
     loadAddCategoryMenu()
     $('#addExCatForm').css 'display', 'block'
 
   $('.addExistingQuestionToCategory').on 'click', (e) ->
     e.preventDefault()
-    loadAddQuestionMenu(e)
+    $('#question-search-field').val('') # Reset search field
+    categoryId = e.target.getAttribute('data-categoryid')
+    loadAddQuestionMenu(categoryId)
     $('#addExQuestForm').css 'display', 'block'
+
+  # Listeners for change events on searching
+  $('#category-search-field').on 'keyup', loadAddCategoryMenu
+  $('#question-search-field').on 'keyup', (e) ->
+    categoryId = e.target.getAttribute('data-categoryid')
+    loadAddQuestionMenu(categoryId)
 
   $('.response_option_select').on 'change', responseOptionSelected
 

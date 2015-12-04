@@ -365,6 +365,11 @@ div.delete:hover {
 	}
 }
 
+.popupContent .filtering-field {
+	position: absolute;
+	top: 5px; right: 33px;
+}
+
 .responseOptions li {
 	display: inline-block;
 	width: 100px;

@@ -22,12 +22,12 @@ function setListeners() {
 	$('.catImgUploadForm').off().on('change', window.categoryImageUpload);
 	$('.catAudioUploadForm').off().on('change', window.categoryAudioUpload);
 
-	$('.editRespOption').off().on("click", function (e) {
+	$('.editRespOption').off().on('click', function (e) {
 		e.preventDefault();
 		$('#editRespOptForm').css('display', 'block');
 	});
 
-	$('.editRespAllOption').off().on("click", function (e) {
+	$('.editRespAllOption').off().on('click', function (e) {
 		e.preventDefault();
 
 		// Update response option menu

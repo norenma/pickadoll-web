@@ -177,6 +177,8 @@ class QuestionsController < ApplicationController
   end
 
   def list
+    search_string = params[:search_string] || ''
+
     @questions = Question.all
     user_id = session[:user_id]
 
@@ -194,6 +196,11 @@ class QuestionsController < ApplicationController
                           questionnaire_id: questionnaire.id).first
       # Ignore this questionnaire if user has no right to see it
       next unless questionnaire.user_id == user_id || right
+
+      # Ignore this question if it doesn't match the search
+      search_names = [quest.name, cat.name, questionnaire.name]
+      next unless search_string == '' ||
+                  search_names.any? { |str| str =~ /#{search_string}/i }
 
       result << {
         id: quest.id,

@@ -256,6 +256,9 @@
 <div id="addExCatForm" class="popupForm">
 	<div id="addExCatContent" class="popupContent">
 		<h2>Lägg till existerande kategori</h2>
+
+		<%= search_field_tag 'category-search-field', nil, class: 'filtering-field', placeholder: 'Filtrera' %>
+
 		<ul>
 			<li>
 				<a href="#" class="closeAddCatPopup">
@@ -274,6 +277,9 @@
 <div id="addExQuestForm" class="popupForm">
 	<div id="addExQuestContent" class="popupContent">
 		<h2>Lägg till existerande fråga</h2>
+
+		<%= search_field_tag 'question-search-field', nil, class: 'filtering-field', placeholder: 'Filtrera' %>
+
 		<ul>
 			<li>
 				<a href="#" class="closeAddQuestPopup">
