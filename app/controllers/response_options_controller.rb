@@ -55,7 +55,7 @@ class ResponseOptionsController < ApplicationController
     set_id = params[:response_option_id]
     set_name = params[:response_option_name]
     set_availability = params[:response_option_availability] ? true : false
-    resp_vals = params[:respVal]
+    resp_vals = params[:respVal] || []
     resp_label = params[:respLbl]
     resp_audio = params[:respAudio]
     item_ids = params[:respValItemId]

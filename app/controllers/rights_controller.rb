@@ -56,12 +56,12 @@ class RightsController < ApplicationController
       @right.subject_id = subject_id
 
       if @right.save
-        flash[:notice] = "Enkäten har delats med #{subject.username}!"
+        flash[:right_notice] = "Enkäten har delats med #{subject.username}!"
       else
-        flash[:notice] = 'Ett fel uppstod.'
+        flash[:right_notice] = 'Ett fel uppstod.'
       end
     else
-      flash[:notice] = 'Användaren kunde inte hittas.'
+      flash[:right_notice] = 'Användaren kunde inte hittas.'
     end
 
     # respond_to do |format|

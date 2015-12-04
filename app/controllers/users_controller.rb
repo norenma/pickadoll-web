@@ -20,11 +20,14 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      flash[:notice] = 'Konto skapat!'
-      flash[:color] = 'valid'
+      flash.now[:notice] = 'Konto skapat!'
     else
-      flash[:notice] = 'Ett fel uppstod'
-      flash[:color] = 'invalid'
+      flash.now[:notice] = 'Ett fel uppstod.'
+    end
+
+    if authenticate_user
+      @curr_user = User.find(session[:user_id])
+      @username = @curr_user.username
     end
 
     render new_user_path

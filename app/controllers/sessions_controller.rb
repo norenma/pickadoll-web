@@ -10,11 +10,11 @@ class SessionsController < ApplicationController
 
     if authorized_user
       session[:user_id] = authorized_user.id
-      flash[:notice] = "Welcome again, #{authorized_user.username}."
+      flash[:notice] = "Välkommen åter, #{authorized_user.username}."
       # redirect_to(:action => 'home')
       redirect_to(controller: 'questionnaires', action: 'index')
     else
-      flash[:notice] = 'Invalid Username or Password'
+      flash[:notice] = 'Felaktigt användarnamn eller lösenord.'
       flash[:color] = 'invalid'
       render 'login'
     end
