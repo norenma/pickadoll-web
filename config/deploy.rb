@@ -2,7 +2,7 @@
 lock '3.4.0'
 
 set :application, 'Pickadoll'
-set :repo_url, 'git@bitbucket.org:idac/pickadoll-web.git' # /idac/ ?
+set :repo_url, 'git@bitbucket.org:idac/pickadoll-web.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
