@@ -31,10 +31,14 @@ gem 'bcrypt', '~> 3.1.7'
 # Use unicorn as the app server
 gem 'unicorn'
 
+# Use dotenv-rails for environment variables
+# gem 'dotenv-rails'
+
 # Use Capistrano for deployment
 group :development do
   gem 'capistrano-rails'
-  gem 'capistrano-unicorn-nginx', '~> 3.2.0'
+  gem 'capistrano-unicorn-nginx', '~> 3.2.0' # For configuring nginx/unicorn
+  gem 'capistrano-rbenv', '~> 2.0' # For using rbenv on server
 end
 
 # Use debugger

@@ -24,7 +24,7 @@ set :scm, :git
 set :pty, true
 
 # Default value for :linked_files is []
-# set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
 
 # Default value for linked_dirs is []
 # set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
@@ -42,11 +42,14 @@ set :rails_env, 'production'
 set :deploy_via, :copy
 set :ssh_options, { :forward_agent => true }
 
-namespace :deploy do
+# Rbenv
+set :rbenv_type, :user
+set :rbenv_ruby, '2.2.1'
+# set :rbenv_custom_path, '/home/erich/.rbenv'
+# set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
+# set :rbenv_map_bins, %w{rake gem bundle ruby rails}
 
-  # desc "Symlink shared config files"
-  # task :symlink_config_files do
-  # end
+namespace :deploy do
 
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
@@ -55,14 +58,6 @@ namespace :deploy do
       #   execute :rake, 'cache:clear'
       # end
     end
-
-    on roles(:all) do
-      execute "ln -s #{ deploy_to }/shared/config/database.yml #{ current_path }/config/database.yml"
-    end
   end
-
-  # after 'deploy', 'deploy:symlink_config_files'
-  # after 'deploy', 'deploy:restart'
-  # after 'deploy', 'deploy:cleanup'
 
 end
