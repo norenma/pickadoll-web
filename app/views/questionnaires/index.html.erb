@@ -32,7 +32,7 @@
 				<td><%= q[:description] %></td>
 				<td><%= q[:owner][0] %></td>
 				<td><%= link_to q[:number_of_answers][0]['number_of_answers'], answer_path(q[:id]) %> </td>
-				<td><%= q[:created_at] %></td>
+				<td><%= q[:created_at].localtime.strftime('%-d-%-m-%Y %k:%M') %></td>
 				<td>
 					<% if @curr_user.create_questionnaire_permission %>
 						<%= link_to 'Kopiera', clone_questionnaire_path(q[:id]), method: :post %>
