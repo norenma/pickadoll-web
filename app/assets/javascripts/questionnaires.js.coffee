@@ -1,7 +1,10 @@
 #Awful global variable to keep check on the input things
 window.stoppedInput = null
 
-#Another awful global variable to keep track of option alternative view's state
+#Another waful global variable to store the forms in which something's been changed
+window.targetsWithChanges = []
+
+#Another awful global variable to keep track of response option view's state
 window.showingForQuestion = null
 
 #method for adding a new question to a category
@@ -57,22 +60,29 @@ window.updateResponseOptionAudio = updateResponseOptionAudio = (e) ->
 
 #Method for handling changes on input elements, some sort of auto-save function
 window.handleChangeOnInput = handleChangeOnInput = (e) ->
-  console.log 'Handling change on input'
-  handleStop = (target) ->
-    console.log 'Done'
-    form = findFormParent target
-    console.log form
-    $(form).ajaxSubmit
-      beforeSubmit: (a, f, o) ->
-        o.dataType = 'json'
-      complete: (x, t) ->
-        console.log 'Saved'
-        updateResponseOptionAudio e
-        updateResponseOptionSelectors()
-  if stoppedInput
-    clearTimeout window.stoppedInput
+  console.log 'Handling change on input ...'
 
-  window.stoppedInput = setTimeout handleStop, 1000, e.target
+  handleStop = () ->
+    for target in window.targetsWithChanges
+      form = findFormParent target
+      console.log "Saving with form #{form}"
+
+      $(form).ajaxSubmit
+        beforeSubmit: (a, f, o) ->
+          o.dataType = 'json'
+        complete: (x, t) ->
+          console.log 'Saved'
+          window.targetsWithChanges = window.targetsWithChanges.filter (t) -> t isnt target # Remove target from array
+          updateResponseOptionAudio e
+          updateResponseOptionSelectors()
+  #end of handleStop
+
+  clearTimeout window.stoppedInput if stoppedInput
+
+  # Add target to array, since it has been changed
+  window.targetsWithChanges.push e.target if e.target not in window.targetsWithChanges
+
+  window.stoppedInput = setTimeout handleStop, 1000
 #end of handleChangeOnInput
 
 #method for adding a new category to

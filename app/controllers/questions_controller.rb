@@ -58,31 +58,31 @@ class QuestionsController < ApplicationController
 
   # method for handling the update of a question
   def update
-    respond_to do |format|
-      @question = Question.find(params[:id])
-      # @media_files = @question.media_files.update(media_file_params)
+    @question = Question.find(params[:id])
+    # @media_files = @question.media_files.update(media_file_params)
 
-      if params[:question_image]
-        @quest_img = params[:question_image]
-        # upload image file to the uploads folder
-        File.open(Rails.root.join('public', 'uploads',
-                                  @quest_img.original_filename), 'wb') do |file|
-          file.write(@quest_img.read)
-          media_path = File.basename(file.path)
-          # render plain: @question.inspect
-          # save details about the image in media_files
-          media_files = MediaFile.create(
-            media_type: 'img',
-            ref: media_path
-          )
-          media_files.save
-          # get the id of the inserted mediafile
-          @img_id = MediaFile.last.id
-          # render plain: mid
-        end
-        # render plain: @quest_img.inspect
+    if params[:question_image]
+      @quest_img = params[:question_image]
+      # upload image file to the uploads folder
+      File.open(Rails.root.join('public', 'uploads',
+                                @quest_img.original_filename), 'wb') do |file|
+        file.write(@quest_img.read)
+        media_path = File.basename(file.path)
+        # render plain: @question.inspect
+        # save details about the image in media_files
+        media_files = MediaFile.create(
+          media_type: 'img',
+          ref: media_path
+        )
+        media_files.save
+        # get the id of the inserted mediafile
+        @img_id = MediaFile.last.id
+        # render plain: mid
       end
+      # render plain: @quest_img.inspect
+    end
 
+    respond_to do |format|
       if @question.update(question_params)
         if @img_id
           @question.question_image = @img_id
