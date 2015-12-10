@@ -3,7 +3,7 @@
 	<h1>Resultat för <%= @questionnaire.name %></h1>
 
 	<ul class="user-info-list">
-		<li><img src="../assets/user_male-32.png"> <%= @username %> </li>
+		<li><%= image_path('user_male-32.png') %> <%= @username %></li>
 		<li><%= link_to "Logga ut", sessions_logout_path %></li>
 	</ul>
 </div>

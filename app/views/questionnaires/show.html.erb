@@ -4,7 +4,7 @@
 <div id="quest-header" class="page-header">
 	<p class="home-btn"><%= link_to image_tag("portal_menu_btn.png", alt: "Home button"), questionnaires_path %></p>
 	<ul class="user-info-list">
-		<li><img src="/assets/user_male-32.png"> <%= @username %> </li>
+		<li><img src="<%= image_path('user_male-32.png') %>"> <%= @username %> </li>
 		<li><%= link_to "Logga ut", sessions_logout_path %></li>
 		<li><%= link_to "Dela enkäten ...", new_questionnaire_right_path(@questionnaire.id) %></li>
 	</ul>
