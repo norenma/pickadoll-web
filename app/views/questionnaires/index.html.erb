@@ -5,7 +5,7 @@
 	<h1>Enkäter</h1>
 
 	<ul class="user-info-list">
-		<li><img src="<%= image_path('user_male-32.png') %>"> <%= @username %> </li>
+		<li><%= image_tag 'user_male-32.png' %> <%= @username %> </li>
 		<li><%= link_to "Logga ut", sessions_logout_path %></li>
 		<% if @curr_user.create_user_permission %>
 			<li><%= link_to "Skapa ny användare ...", new_user_path %></li>

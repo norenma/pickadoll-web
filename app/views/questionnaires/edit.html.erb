@@ -6,7 +6,7 @@
 	<%= render 'headerform' %>
 
 	<ul class="user-info-list">
-		<li><img src="<%= image_path('user_male-32.png') %>"> <%= @username %> </li>
+		<li><%= image_tag 'user_male-32.png' %> <%= @username %> </li>
 		<li><%= link_to "Logga ut", sessions_logout_path %></li>
 		<li><%= link_to "Dela enkäten ...", new_questionnaire_right_path(@questionnaire.id) %></li>
 	</ul>
