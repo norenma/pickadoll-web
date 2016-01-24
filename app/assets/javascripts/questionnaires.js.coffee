@@ -166,13 +166,14 @@ window.handleDeleteBtn = handleDeleteBtn = (e) ->
   questionId = e.target.getAttribute 'data-question-id'
   console.log questionId
 
-  $.ajax({
-    'url' : '/questions/' + questionId
-    'type' : 'DELETE'
-    'success' : (data) ->
-      #remove the HTML-element for the deleted question
-      $('#question-bar-' + data.id).remove()
-  })
+  if confirm "Är du säker på att du vill radera frågan? Detta kan inte ångras."
+    $.ajax({
+      'url' : '/questions/' + questionId
+      'type' : 'DELETE'
+      'success' : (data) ->
+        #remove the HTML-element for the deleted question
+        $('#question-bar-' + data.id).remove()
+    })
 #end of handling the delete-button
 
 
@@ -228,14 +229,15 @@ window.handleCatDelete = handleCatDelete = (e) ->
   catId = $(e.target).attr('data-category-id')
   console.log catId
 
-  $.ajax({
-    'url' : '/categories/' + catId
-    'type' : 'DELETE'
-    'success' : (data) ->
-      console.log data
+  if confirm "Är du säker på att du vill radera kategorin? Detta kan inte ångras."
+    $.ajax({
+      'url' : '/categories/' + catId
+      'type' : 'DELETE'
+      'success' : (data) ->
+        console.log data
 
-      $('#category-' + data.id).remove()
-  })
+        $('#category-' + data.id).remove()
+    })
 #end of categoryDelete
 
 #responseOptionSelected
