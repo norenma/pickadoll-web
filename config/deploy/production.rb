@@ -9,7 +9,7 @@
 # server '129.16.157.212', :app, :web, :db, primary: true
 
 # server '129.16.157.212', user: 'erich', roles: %w{app db web}, primary: true
-server 'virt09.itu.chalmers.se', user: 'erich', roles: %w{app db web}, primary: true
+server '129.16.69.99', user: 'erich', roles: %w{app db web}, primary: true
 
 # role-based syntax
 # ==================
@@ -34,7 +34,7 @@ server 'virt09.itu.chalmers.se', user: 'erich', roles: %w{app db web}, primary: 
 # Feel free to add new variables to customise your setup.
 
 # Specify domain name
-# set :nginx_server_name, 'mydomain.com'
+set :nginx_server_name, 'virt09.itu.chalmers.se'
 
 # SSL setup
 # set :nginx_use_ssl, true

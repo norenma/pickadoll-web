@@ -37,8 +37,11 @@ gem 'unicorn'
 # Use Capistrano for deployment
 group :development do
   gem 'capistrano-rails'
-  gem 'capistrano-unicorn-nginx', '~> 3.2.0' # For configuring nginx/unicorn
+  # For configuring nginx/unicorn -- use special fork for Red Hat server
+  gem 'capistrano-unicorn-nginx', '~> 3.4.0',
+    git: 'https://github.com/erwald/capistrano-unicorn-nginx.git', ref: '38f9e9c'
   gem 'capistrano-rbenv', '~> 2.0' # For using rbenv on server
+  gem 'highline', '~> 1.7' # To avoid echoing passwords in terminal
 end
 
 # Use debugger
