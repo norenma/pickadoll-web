@@ -18,6 +18,8 @@ module Api
         # tmp_file_path = File.absolute_path(uploaded_file.tempfile)
         answers = CSV.read(uploaded_file.tempfile)
 
+        logger.info "Answers: #{answers}"
+
         # render some response to the app
         render json: answers
 
@@ -27,18 +29,20 @@ module Api
           # See: https://bibwild.wordpress.com/2014/07/17/activerecord-concurrency-in-rails4-avoid-leaked-connections/
           ActiveRecord::Base.forbid_implicit_checkout_for_thread!
 
-          answers.each do |row|
-            # things.push(row[0])
-            answer = Answer.new
-            answer.tester_id = row[0]
-            answer.questionnaire = row[1]
-            answer.question = row[2]
-            answer.device_id = row[3]
-            answer.answer_label = row[4]
-            answer.answer_value = row[5]
-            answer.answer_time = row[6]
-            answer.user = row[7]
-            answer.save
+          ActiveRecord::Base.connection_pool.with_connection do
+            answers.each do |row|
+              # things.push(row[0])
+              answer = Answer.new
+              answer.tester_id = row[0]
+              answer.questionnaire = row[1]
+              answer.question = row[2]
+              answer.device_id = row[3]
+              answer.answer_label = row[4]
+              answer.answer_value = row[5]
+              answer.answer_time = row[6]
+              answer.user = row[7]
+              answer.save
+            end
           end
         end
       else
