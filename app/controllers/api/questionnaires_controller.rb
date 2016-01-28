@@ -32,10 +32,15 @@ module Api
           ActiveRecord::Base.connection_pool.with_connection do
             answers.each do |row|
               # things.push(row[0])
-              answer = Answer.new
-              answer.tester_id = row[0]
-              answer.questionnaire = row[1]
-              answer.question = row[2]
+              tester_id = row[0]
+              questionnaire_id = row[1]
+              question_id = row[2]
+
+              answer = Answer.find_or_create_by(tester_id: tester_id,
+                questionnaire_id: questionnaire_id, question_id: question_id)
+              answer.tester_id = tester_id
+              answer.questionnaire = questionnaire_id
+              answer.question = question_id
               answer.device_id = row[3]
               answer.answer_label = row[4]
               answer.answer_value = row[5]
