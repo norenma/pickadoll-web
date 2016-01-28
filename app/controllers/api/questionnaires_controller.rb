@@ -37,7 +37,7 @@ module Api
               question_id = row[2]
 
               answer = Answer.find_or_create_by(tester_id: tester_id,
-                questionnaire_id: questionnaire_id, question_id: question_id)
+                questionnaire: questionnaire_id, question: question_id)
               answer.tester_id = tester_id
               answer.questionnaire = questionnaire_id
               answer.question = question_id
