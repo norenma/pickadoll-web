@@ -23,6 +23,10 @@ module Api
 
         # create thread and deal with the new data that have been uploaded
         Thread.new do
+          # Disable the implicit checkout when making a new thread.
+          # See: https://bibwild.wordpress.com/2014/07/17/activerecord-concurrency-in-rails4-avoid-leaked-connections/
+          ActiveRecord::Base.forbid_implicit_checkout_for_thread!
+
           answers.each do |row|
             # things.push(row[0])
             answer = Answer.new
