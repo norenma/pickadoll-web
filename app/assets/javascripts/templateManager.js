@@ -132,9 +132,13 @@ function loadAddExistingQuestionTemplate(categoryId, questionData) {
 	// Add handler
 	$('.questionsInput a').off().on("click", handleAddExistingQuestion);
 }
+	console.log("THISis run");
+
 
 function loadNewCategoryTemplate(data) {
+	console.log("this is run");
 	var htmlTmp = $('#newCategoryTmp').html()
+
 	$('ul.survey-content').append(_.template(htmlTmp, data));
 	console.log(data);
 
