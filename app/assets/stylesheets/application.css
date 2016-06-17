@@ -142,7 +142,7 @@ label {
 
 input[type="text"], textarea {
 	display: inline-block;
-	min-width: 125px;
+	min-width: 400px;
 	padding: .25em;
 	border: 1px solid #ddd;
 	font-size: 1.0em;
