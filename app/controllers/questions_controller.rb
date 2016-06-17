@@ -94,6 +94,24 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def remove_image
+    p('remove img!')
+    @q_id = params[:q_id]
+    @q = Question.find(@q_id)
+    @q.question_image = 0
+    @q.save
+    render json: @q
+  end
+
+  def remove_audio
+    p('remove audio!')
+    @q_id = params[:q_id]
+    @q = Question.find(@q_id)
+    @q.question_audio = 0
+    @q.save
+    render json: @q
+  end
+
   def upload_image
     # respond_to do |format|
     # render plain: params.inspect

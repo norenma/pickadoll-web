@@ -22,7 +22,12 @@ function setListeners() {
 	$('.catImgUploadForm').off().on('change', window.categoryImageUpload);
 	$('.catAudioUploadForm').off().on('change', window.categoryAudioUpload);
 
+	$('.clear-cat-img-btn').off().on("click", function (e) {
+		//console.log("click!", e);
+	});
+
 	$('.editRespOption').off().on('click', function (e) {
+		//console.log("click");
 		e.preventDefault();
 		$('#editRespOptForm').css('display', 'block');
 	});

@@ -36,45 +36,47 @@
 						<% end %>
 					</div>
 
-					<div class="category-image-holder">
-						<!-- A form for the image upload  -->
-						<%= form_for c, url: { controller: "categories", action: :upload_image }, html: { method: :post,
-							class: 'catImgUploadForm changes', multipart: true } do |f| %>
 
-							<%= f.hidden_field :id, value: c.id %>
+				<div class="category-image-holder">
+					<!-- A form for the image upload  -->
+					<%= form_for c, url: { controller: "categories", action: :upload_image }, html: { method: :post, class: 'catImgUploadForm changes', multipart: true } do |f| %>
 
-							<%= f.label :category_image, 'Bild' %>
-							<%= file_field_tag 'category_image' %>
+						<%= f.hidden_field :id, value: c.id %>
+
+						<%= f.label :category_image, raw('<h3>Bild</h3><p class"label-files"> Använd .png, .jpg eller .gif. Bilderna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+						<%= file_field_tag 'category_image' %>
+					<% end %>
+
+					<% if c.image %>
+						<% if c.image != 0 %>
+						<% @catImg = MediaFile.find(c.image) %>
+						<img src="/uploads/<%= @catImg.ref %>" alt="Bild för kategori " class="catImg"/>
 						<% end %>
+					<% end %>
+					<button data-categoryid="<%=c.id %>" <% if c.image == 0 %> style="display:none" <% end %> class="clear-cat-img-btn">
+						Rensa
+					</button>
+				</div>
 
-						<% if c.image %>
-							<% if c.image != 0 %>
-							<% @catImg = MediaFile.find(c.image) %>
-
-							<img src="/uploads/<%= @catImg.ref %>" alt="Bild för kategori " class="catImg"/>
-							<% end %>
+				<div class="category-audio-holder">
+					<div class="categoryAudioForm">
+						<%= form_for c, url: { controller: "categories", action: :upload_audio },
+							html: { method: :post, class: 'catAudioUploadForm changes', multipart: true } do |f| %>
+							<%= f.hidden_field :id, value: c.id %>
+							<%= f.label :category_audio, raw('<h3>Ljud</h3><p class"label-files"> Använd .mp3 eller mp4. Filerna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+							<%= file_field_tag 'category_audio' %>
 						<% end %>
 					</div>
 
-					<div class="category-audio-holder">
-						<div class="categoryAudioForm">
-							<%= form_for c, url: { controller: "categories", action: :upload_audio },
-							html: { method: :post, class: 'catAudioUploadForm changes',
-							multipart: true } do |f| %>
-
-							<%= f.hidden_field :id, value: c.id %>
-
-							<%= f.label :category_audio, 'Ljud' %>
-							<%= file_field_tag 'category_audio' %>
-
-							<% end %>
-						</div>
-
-						<% if c.audio %>
-							<% @catAud = MediaFile.find(c.audio) %>
-							<audio controls="controls" class="audioPlayer" src="/uploads/<%= @catAud.ref %>">
-							</audio>
-						<% end %>
+					<% if c.audio and c.audio != 0 %>
+						<% @catAud = MediaFile.find(c.audio) %>
+						<audio controls="controls" class="audioPlayer" src="/uploads/<%= @catAud.ref %>"></audio>
+					<% else %>
+						<audio controls="controls" class="audioPlayer" src=""></audio>
+					<% end %>
+					<button data-categoryid="<%=c.id %>" <% if c.audio == 0 or c.audio.nil? %> style="display:none" <% end %> class="clear-cat-audio-btn">
+					Rensa
+					</button>
 					</div>
 				</div>
 			</div>
@@ -124,49 +126,60 @@
 							<% end %>
 						</div>
 
-						<div class="questionImg">
-							<div class="questionImgForm">
-								<%= form_for q, url: { controller: "questions", action: :upload_image },
+		<!-- question-image upload and display -->
+				<div class="questionImg">
+					<div class="questionImgForm">
+						<%= form_for q, url: { controller: "questions", action: :upload_image },
 								html: { method: :post, class: 'imgUploadForm changes', multipart: true } do |f| %>
+						<%= f.hidden_field :id, value: q.id %>
+						<%= f.label :image, raw('<h3>Bild</h3><p class"label-files"> Använd .png, .jpg eller .gif. Bilderna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+						<%= file_field_tag 'question_image' %>
+						<% end %>
+					</div>
 
-									<%= f.hidden_field :id, value: q.id %>
-									<%= f.label :image, "Bild" %>
-									<%= file_field_tag 'question_image' %>
+					<div class="questionImgWrapper">
+						<% if q.question_image %>
+						<% if q.question_image != 0 %>
+						<% imgFile = MediaFile.find(q.question_image) %>
+						<% if imgFile  %>
+						<img src="/uploads/<%= imgFile.ref%>" class="qImg">
+						<% end %>
+						<% end %>
+						<% end %>
+					</div>
+					<button data-questionId="<%=q.id %>" <% if q.question_image == 0 or q.question_image.nil? %> style="display:none" <% end %> class="clear-question-img-btn">
+						Rensa
+					</button>
+				</div>
+				<!-- ////////question-image upload and display -->
 
-								<% end %>
-							</div>
+								<!-- question-audio upload and display -->
+				<div class="questionAudio">
+					<div class="questionAudioForm">
+						<%= form_for q, url: { controller: "questions", action: :upload_audio },
+								html: { method: :post, class: 'audioUploadForm changes', multipart: true } do |f| %>
 
-							<div class="questionImgWrapper">
-								<% if q.question_image %>
-									<% imgFile = MediaFile.find(q.question_image) %>
-									<% if imgFile  %>
-										<img src="/uploads/<%= imgFile.ref%>" >
-									<% end %>
-								<% end %>
-							</div>
-						</div>
+						<%= f.hidden_field :id, value: q.id %>
 
-						<div class="questionAudio">
-							<div class="questionAudioForm">
-								<%= form_for q, url: { controller: "questions", action: :upload_audio },
-								html: { method: :post, class: 'audioUploadForm changes',
-								multipart: true } do |f| %>
+						<%= f.label :audio, raw('<h3>Ljud</h3><p class"label-files"> Använd .mp3 eller mp4. Filerna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+						<%= file_field_tag 'question_audio' %>
 
-								<%= f.hidden_field :id, value: q.id %>
+						<% end %>
+					</div>
 
-								<%= f.label :audio, "Ljud" %>
-								<%= file_field_tag 'question_audio' %>
-
-							<% end %>
-							</div>
-
-							<div class="questionAudioPlayer">
-								<% if q.question_audio %>
-								<% audio_file = MediaFile.find(q.question_audio) %>
-								<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
-								<% end %>
-							</div>
-						</div>
+					<div class="questionAudioPlayer">
+						<% if q.question_audio and q.question_audio != 0 %>
+						<% audio_file = MediaFile.find(q.question_audio) %>
+						<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
+						<% else %>
+						<audio controls="controls" src=""></audio>
+						<% end %>
+					</div>
+					<button data-questionId="<%=q.id %>" class="clear-question-audio-btn">
+						Rensa
+					</button>
+				</div>
+				<!-- /////////////////// question-audio upload and display -->
 
 						<div class="questionOptions">
 							<label>Svarsalternativ</label>
