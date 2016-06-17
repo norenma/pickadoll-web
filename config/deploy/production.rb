@@ -9,7 +9,7 @@
 # server '129.16.157.212', :app, :web, :db, primary: true
 
 # server '129.16.157.212', user: 'erich', roles: %w{app db web}, primary: true
-server '129.16.69.99', user: 'erich', roles: %w{app db web}, primary: true
+server '129.16.69.99', user: 'norenma', roles: %w{app db web}, primary: true
 
 # role-based syntax
 # ==================

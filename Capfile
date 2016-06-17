@@ -7,6 +7,8 @@ require 'capistrano/deploy'
 # Use Unicorn and Nginx
 require 'capistrano/unicorn_nginx'
 
+require 'sshkit/sudo'
+
 # Include tasks from other gems included in your Gemfile
 #
 # For documentation on these, see for example:
