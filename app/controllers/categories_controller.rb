@@ -7,9 +7,14 @@ class CategoriesController < ApplicationController
     @questid = params[:questionnaire_id]
   end
 
+  def update_time(id)
+    @questionnaire = Questionnaire.find(id)
+    @questionnaire.update(updated_at: DateTime.now)
+  end
+
   def update
     @category = Category.find(params[:id])
-
+    update_time(@category.questionnaire_id_id)
     if @category.update(category_params)
       redirect_to questionnaires_path
     else
@@ -19,6 +24,7 @@ class CategoriesController < ApplicationController
 
   def update_order
     @category = Category.find(params[:id])
+    update_time(@category.questionnaire_id_id)
     @order = params[:questOrder]
 
     v = 1
@@ -41,9 +47,32 @@ class CategoriesController < ApplicationController
     end
   end
 
+  def remove_image
+    p('remove img!')
+    @c_id = params[:cat_id]
+    @cat = Category.find(@c_id)
+    update_time(@cat.questionnaire_id_id)
+    @cat.image = 0
+    @cat.save
+    render json: @c_id
+  end
+
+  def remove_audio
+    p('remove audio!')
+    @c_id = params[:cat_id]
+    @cat = Category.find(@c_id)
+    update_time(@cat.questionnaire_id_id)
+    @cat.audio = 0
+    @cat.save
+    render json: @c_id
+  end
+
+
   def upload_image
     @img_file = params[:category_image]
     @c_id = params[:category][:id]
+
+
 
     if !@img_file.nil?
       File.open(Rails.root.join('public', 'uploads',
@@ -66,6 +95,7 @@ class CategoriesController < ApplicationController
         # save the img to the question
         @cat = Category.find(@c_id)
         @cat.image = @img_id
+        update_time(@cat.questionnaire_id_id)
         @cat.save
         @media_res = MediaFile.find(@img_id)
         render json: @media_res
@@ -98,6 +128,7 @@ class CategoriesController < ApplicationController
         @audio_id = MediaFile.last.id
         @cat = Category.find(@c_id)
         @cat.audio = @audio_id
+        update_time(@cat.questionnaire_id_id)
         @cat.save
         @media_res = MediaFile.find(@audio_id)
         render json: @media_res
@@ -113,6 +144,8 @@ class CategoriesController < ApplicationController
     @last_quest = Question.where(category_id: params[:catid]).order(order: :desc).first
     @quest.category_id = params[:catid]
     @catid = params[:catid]
+    @cat = Category.find(@catid)
+    update_time(@cat.questionnaire_id_id)
     @resp_opts = ResponseOption.all
     # need to set order value as well
     if @last_quest
@@ -185,6 +218,7 @@ class CategoriesController < ApplicationController
     questions.each(&:destroy)
 
     category = Category.find(id)
+    update_time(@category.questionnaire_id_id)
     category.destroy
 
     # Send some feedback

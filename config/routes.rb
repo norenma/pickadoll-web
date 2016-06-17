@@ -23,10 +23,15 @@ Rails.application.routes.draw do
   # Route for the question media upload
   post 'questions/upload_image'
   post 'questions/upload_audio'
+  post 'questions/remove_image'
+  post 'questions/remove_audio'
 
   # Route for the category media upload
   post 'categories/upload_image'
   post 'categories/upload_audio'
+  post 'categories/remove_image'
+  post 'categories/remove_audio'
+
 
   # Route for cloning questionnaire
   post 'questionnaires/:id/clone', to: 'questionnaires#clone', as: 'clone_questionnaire'

@@ -70,7 +70,7 @@ class QuestionnairesController < ApplicationController
     @curr_user = User.find(session[:user_id]) if authenticate_user
     if @curr_user.create_questionnaire_permission
       @questionnaire = Questionnaire.new
-      @questionnaire.name = 'Ny survey'
+      @questionnaire.name = 'Ny enkät'
       @questionnaire.user_id = session[:user_id]
       @questionnaire.save
 
@@ -117,6 +117,15 @@ class QuestionnairesController < ApplicationController
   end
 
   def destroy
+    #puts "destroy!!"
+    # # Questions that belongs to the category
+    categories = Category.where(questionnaire_id_id: params[:id])
+    #puts categories
+    categories.each do |cat|
+      questions = Question.where(category_id: cat.id)
+      questions.each(&:destroy)
+    end
+    categories.each(&:destroy)
     @questionnaire = Questionnaire.find(params[:id])
     @questionnaire.destroy
 

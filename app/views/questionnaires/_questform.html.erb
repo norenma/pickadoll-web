@@ -1,220 +1,238 @@
 <%= javascript_tag do %>
-	window.questionnaire_id = '<%= @questionnaire.id %>';
+window.questionnaire_id = '<%= @questionnaire.id %>';
 <% end %>
 
-<ul class="survey-content draggable-survey-content" >
+<ul class="survey-content draggable-survey-content">
 
 	<% @categories.each do |c| %>
-		<li class="category" data-categoryid="<%= c.id %>" id="category-<%= c.id %>">
-			<div class="category-bar moveable" >
-				<!-- , html: {multipart: true} -->
-				<div class="category-name">
-				<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'},
-							remote: true do |f| %>
-					<%= f.text_field :name %>
+	<li class="category" data-categoryid="<%= c.id %>" id="category-<%= c.id %>">
+		<div class="category-bar moveable">
+			<!-- , html: {multipart: true} -->
+			<div class="category-name">
+				<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'}, remote: true do |f| %>
+				<%= f.text_field :name %>
 				<% end %>
-				</div>
-
-				<div class="toolbar">
-					<ul>
-						<li><a href="#" class="edit-btn">
-							<%= image_tag("edit-50.png", alt: "Edit button") %>
-						</a></li>
-						<li><a href="#" class="delete-cat-btn" data-category-id="<%= c.id %>">
-							<%= image_tag("delete.png", alt: "Delete button") %>
-						</a></li>
-					</ul>
-				</div>
-
-				<div class="category-content">
-					<div class="category-text-holder">
-						<label>Kategoritext</label>
-						<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'},
-								remote: true do |f| %>
-
-							<%= f.text_area :description %>
-						<% end %>
-					</div>
-
-					<div class="category-image-holder">
-						<!-- A form for the image upload  -->
-						<%= form_for c, url: { controller: "categories", action: :upload_image }, html: { method: :post,
-							class: 'catImgUploadForm changes', multipart: true } do |f| %>
-
-							<%= f.hidden_field :id, value: c.id %>
-
-							<%= f.label :category_image, 'Bild' %>
-							<%= file_field_tag 'category_image' %>
-						<% end %>
-
-						<% if c.image %>
-							<% if c.image != 0 %>
-							<% @catImg = MediaFile.find(c.image) %>
-
-							<img src="/uploads/<%= @catImg.ref %>" alt="Bild för kategori " class="catImg"/>
-							<% end %>
-						<% end %>
-					</div>
-
-					<div class="category-audio-holder">
-						<div class="categoryAudioForm">
-							<%= form_for c, url: { controller: "categories", action: :upload_audio },
-							html: { method: :post, class: 'catAudioUploadForm changes',
-							multipart: true } do |f| %>
-
-							<%= f.hidden_field :id, value: c.id %>
-
-							<%= f.label :category_audio, 'Ljud' %>
-							<%= file_field_tag 'category_audio' %>
-
-							<% end %>
-						</div>
-
-						<% if c.audio %>
-							<% @catAud = MediaFile.find(c.audio) %>
-							<audio controls="controls" class="audioPlayer" src="/uploads/<%= @catAud.ref %>">
-							</audio>
-						<% end %>
-					</div>
-				</div>
 			</div>
 
-			<ul class="category-questions draggable-category-questions" >
-			<% catquest = @questions.where(category_id: c.id) %>
+			<div class="toolbar">
+				<ul>
+					<li>
+						<a href="#" class="edit-btn">
+							<%= image_tag("edit-50.png", alt: "Edit button") %>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="delete-cat-btn" data-category-id="<%= c.id %>">
+							<%= image_tag("delete.png", alt: "Delete button") %>
+						</a>
+					</li>
+				</ul>
+			</div>
 
-			<% #= render plain: @catquest.inspect %>
-			<% # @questions.where(category_id: c.id).each %>
-			<% @cat = @categories.where(id: c.id) %>
+			<div class="category-content">
+				<div class="category-text-holder">
+					<label>Kategoritext</label>
+					<%= form_for c, url: questionnaire_category_path(@questionnaire, c), html: {class: 'changes'}, remote: true do |f| %>
+					<%= f.text_area :description %>
+					<% end %>
+				</div>
 
-			<% catquest.each do |q| %>
-				<li class="question-bar" data-questionid="<%= q.id %>"
-					id="question-bar-<%= q.id %>">
+				<div class="category-image-holder">
+					<!-- A form for the image upload  -->
+					<%= form_for c, url: { controller: "categories", action: :upload_image }, html: { method: :post, class: 'catImgUploadForm changes', multipart: true } do |f| %>
 
-					<div class="question-name moveable">
-						<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-							remote: true, html: {multipart: true, class: 'changes'} do |f| %>
-							<!-- The questions name  -->
-							<%= f.text_field :name %>
+						<%= f.hidden_field :id, value: c.id %>
+
+						<%= f.label :category_image, raw('<h3>Bild</h3><p class"label-files"> Använd .png, .jpg eller .gif. Bilderna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+						<%= file_field_tag 'category_image' %>
+					<% end %>
+
+					<% if c.image %>
+						<% if c.image != 0 %>
+						<% @catImg = MediaFile.find(c.image) %>
+						<img src="/uploads/<%= @catImg.ref %>" alt="Bild för kategori " class="catImg"/>
 						<% end %>
+					<% end %>
+					<button data-categoryid="<%=c.id %>" <% if c.image == 0 %> style="display:none" <% end %> class="clear-cat-img-btn">
+						Rensa
+					</button>
+				</div>
 
-						<div class="drag-indicator"></div>
+				<div class="category-audio-holder">
+					<div class="categoryAudioForm">
+						<%= form_for c, url: { controller: "categories", action: :upload_audio },
+							html: { method: :post, class: 'catAudioUploadForm changes', multipart: true } do |f| %>
+							<%= f.hidden_field :id, value: c.id %>
+							<%= f.label :category_audio, raw('<h3>Ljud</h3><p class"label-files"> Använd .mp3 eller mp4. Filerna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+							<%= file_field_tag 'category_audio' %>
+						<% end %>
 					</div>
-					<!-- Content for other stuff -->
-					<div class="toolbar">
+
+					<% if c.audio and c.audio != 0 %>
+						<% @catAud = MediaFile.find(c.audio) %>
+						<audio controls="controls" class="audioPlayer" src="/uploads/<%= @catAud.ref %>"></audio>
+					<% else %>
+						<audio controls="controls" class="audioPlayer" src=""></audio>
+					<% end %>
+					<button data-categoryid="<%=c.id %>" <% if c.audio == 0 or c.audio.nil? %> style="display:none" <% end %> class="clear-cat-audio-btn">
+					Rensa
+					</button>
+					</div>
+
+			</div>
+		</div>
+
+
+	<ul class="category-questions draggable-category-questions">
+		<% catquest = @questions.where(category_id: c.id) %>
+
+		<% #= render plain: @catquest.inspect %>
+		<% # @questions.where(category_id: c.id).each %>
+		<% @cat = @categories.where(id: c.id) %>
+
+		<% catquest.each do |q| %>
+		<li class="question-bar" data-questionid="<%= q.id %>" id="question-bar-<%= q.id %>">
+
+			<div class="question-name moveable">
+				<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
+							remote: true, html: {multipart: true, class: 'changes'} do |f| %>
+				<!-- The questions name  -->
+				<%= f.text_field :name %>
+				<% end %>
+
+				<div class="drag-indicator"></div>
+			</div>
+			<!-- Content for other stuff -->
+			<div class="toolbar">
+				<ul>
+					<li>
+						<a href="#" class="edit-btn">
+							<%= image_tag("edit-50.png", alt: "Edit button") %>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="delete-btn" data-question-id="<%= q.id %>">
+							<%= image_tag("delete.png", alt: "Delete button") %>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="question-content">
+				<div class="questionText">
+					<label>Frågetext</label>
+					<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q), remote: true, html: {multipart: true, class: 'changes'} do |f| %>
+
+					<p>
+						<%= f.text_area :text %>
+					</p>
+
+					<% end %>
+				</div>
+
+				<!-- question-image upload and display -->
+				<div class="questionImg">
+					<div class="questionImgForm">
+						<%= form_for q, url: { controller: "questions", action: :upload_image },
+								html: { method: :post, class: 'imgUploadForm changes', multipart: true } do |f| %>
+						<%= f.hidden_field :id, value: q.id %>
+						<%= f.label :image, raw('<h3>Bild</h3><p class"label-files"> Använd .png, .jpg eller .gif. Bilderna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+						<%= file_field_tag 'question_image' %>
+						<% end %>
+					</div>
+
+					<div class="questionImgWrapper">
+						<% if q.question_image %>
+						<% if q.question_image != 0 %>
+						<% imgFile = MediaFile.find(q.question_image) %>
+						<% if imgFile  %>
+						<img src="/uploads/<%= imgFile.ref%>" class="qImg">
+						<% end %>
+						<% end %>
+						<% end %>
+					</div>
+					<button data-questionId="<%=q.id %>" <% if q.question_image == 0 or q.question_image.nil? %> style="display:none" <% end %> class="clear-question-img-btn">
+						Rensa
+					</button>
+				</div>
+				<!-- ////////question-image upload and display -->
+
+				<!-- question-audio upload and display -->
+				<div class="questionAudio">
+					<div class="questionAudioForm">
+						<%= form_for q, url: { controller: "questions", action: :upload_audio },
+								html: { method: :post, class: 'audioUploadForm changes', multipart: true } do |f| %>
+
+						<%= f.hidden_field :id, value: q.id %>
+
+						<%= f.label :audio, raw('<h3>Ljud</h3><p class"label-files"> Använd .mp3 eller mp4. Filerna bör vara mindre än 1 mb för att undvika långa laddtider.</p>') %>
+						<%= file_field_tag 'question_audio' %>
+
+						<% end %>
+					</div>
+
+					<div class="questionAudioPlayer">
+						<% if q.question_audio and q.question_audio != 0 %>
+						<% audio_file = MediaFile.find(q.question_audio) %>
+						<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
+						<% else %>
+						<audio controls="controls" src=""></audio>
+						<% end %>
+					</div>
+					<button data-questionId="<%=q.id %>" class="clear-question-audio-btn">
+						Rensa
+					</button>
+				</div>
+				<!-- /////////////////// question-audio upload and display -->
+
+				<div class="questionOptions">
+					<label>Svarsalternativ</label>
+					<div class="questionOptionsForm">
+						<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q), remote: true, html: {multipart: true, class: 'changes'} do |f| %>
+						<% visible_response_options = @response_options.select { |r| r.question_id == q.id || r.availability || q.response_id == r.id } %>
+						<%=
+									collection_select(:question, :response_id, visible_response_options, :id, :name, {prompt:true, selected: q.response_id}, {class: 'response_option_select',  'data-question-id' => q.id } )
+								%>
+					</div>
+
+					<% if q.response_id %>
+					<div class="responseOptions">
 						<ul>
-							<li><a href="#" class="edit-btn">
-								<%= image_tag("edit-50.png", alt: "Edit button") %>
-							</a></li>
-							<li><a href="#" class="delete-btn" data-question-id="<%= q.id %>">
-								<%= image_tag("delete.png", alt: "Delete button") %>
-							</a></li>
+							<%
+										rOpts = ResponseOption.find(q.response_id)
+									%>
 						</ul>
 					</div>
 
-					<div class="question-content">
-						<div class="questionText">
-							<label>Frågetext</label>
-							<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-				remote: true, html: {multipart: true, class: 'changes'} do |f| %>
-
-								<p>
-									<%= f.text_area :text %>
-								</p>
-
-							<% end %>
-						</div>
-
-						<div class="questionImg">
-							<div class="questionImgForm">
-								<%= form_for q, url: { controller: "questions", action: :upload_image },
-								html: { method: :post, class: 'imgUploadForm changes', multipart: true } do |f| %>
-
-									<%= f.hidden_field :id, value: q.id %>
-									<%= f.label :image, "Bild" %>
-									<%= file_field_tag 'question_image' %>
-
-								<% end %>
-							</div>
-
-							<div class="questionImgWrapper">
-								<% if q.question_image %>
-									<% imgFile = MediaFile.find(q.question_image) %>
-									<% if imgFile  %>
-										<img src="/uploads/<%= imgFile.ref%>" >
-									<% end %>
-								<% end %>
-							</div>
-						</div>
-
-						<div class="questionAudio">
-							<div class="questionAudioForm">
-								<%= form_for q, url: { controller: "questions", action: :upload_audio },
-								html: { method: :post, class: 'audioUploadForm changes',
-								multipart: true } do |f| %>
-
-								<%= f.hidden_field :id, value: q.id %>
-
-								<%= f.label :audio, "Ljud" %>
-								<%= file_field_tag 'question_audio' %>
-
-							<% end %>
-							</div>
-
-							<div class="questionAudioPlayer">
-								<% if q.question_audio %>
-								<% audio_file = MediaFile.find(q.question_audio) %>
-								<audio controls="controls" src="/uploads/<%= audio_file.ref %>"></audio>
-								<% end %>
-							</div>
-						</div>
-
-						<div class="questionOptions">
-							<label>Svarsalternativ</label>
-							<div class = "questionOptionsForm">
-								<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
-					remote: true, html: {multipart: true, class: 'changes'} do |f| %>
-								<% visible_response_options = @response_options.select { |r| r.question_id == q.id || r.availability || q.response_id == r.id } %>
-								<%=
-									collection_select(:question, :response_id, visible_response_options, :id, :name, {prompt:true, selected: q.response_id}, {class: 'response_option_select',  'data-question-id' => q.id } )
-								%>
-						</div>
-
-							<% if q.response_id %>
-								<div class="responseOptions">
-									<ul>
-									<%
-										rOpts = ResponseOption.find(q.response_id)
-									%>
-									</ul>
-								</div>
-
-								<% end %>
-							<% end %>
-
-							<p>
-								<input type="button" value="Redigera svarsalternativ" class="editRespOption">
-							</p>
-						</div>
-					</div>
-				</li>
-			<% end %>
-
-			<li>
-				<p>
-					<button class="addQuestionToCategory" data-categoryid="<%=c.id %>">
-					Lägg till fråga
-					</button>
-					<button class="addExistingQuestionToCategory" data-categoryid="<%=c.id %>">
-					Lägg till existerande fråga ...
-					</button>
-				</p>
-			</li>
-
-			</ul>
+					<% end %>
+					<p>
+						<input type="button" value="Redigera svarsalternativ" class="editRespOption">
+					</p>
+				</div>
+			</div>
 		</li>
-	<!-- End of the categories loop -->
+		<% end %>
+
+		<li>
+			<p>
+				<button class="addQuestionToCategory" data-categoryid="<%=c.id %>">
+					Lägg till fråga
+				</button>
+				<button class="addExistingQuestionToCategory" data-categoryid="<%=c.id %>">
+					Lägg till existerande fråga ...
+				</button>
+			</p>
+		</li>
+
+	</ul>
+	</li>
+	<% end %>
 	<% end %>
 
+	<!-- End of the categories loop -->
+
+
+</ul>
 </ul>
 
 <ul>
@@ -225,6 +243,12 @@
 		</p>
 	</li>
 </ul>
+
+
+
+
+
+
 
 <!-- A little form for adding new response options -->
 <div id="editRespOptForm" class="popupForm">

@@ -98,16 +98,18 @@ addNewCategoryToQuestionnaire = (e) ->
 #Function for uploading the category image
 window.categoryImageUpload = categoryImageUpload = (e) ->
   activeCat = this
+  console.log "upload img", this
   $(this).ajaxSubmit
     beforeSubmit: (a, f, o) ->
       o.dataType = 'json'
     complete: (x, t) ->
       if x.status == 200
+        $(activeCat).parent().find('.clear-cat-img-btn').show();
         imgRes = JSON.parse x.responseText
-
         if $(activeCat).parent().children('img').length == 0
-          $(activeCat).before('<img src="/uploads/' + imgRes.ref + '" alt="Bild för kategori" />')
+          $(activeCat).after('<img src="/uploads/' + imgRes.ref + '" alt="Bild för kategori" class="catImg"/>')
         else
+          $(activeCat).parent().children('img.catImg').show()
           $(activeCat).parent().children('img.catImg').attr 'src', '/uploads/' + imgRes.ref
       #end if x.status == 200
   #console.log form
@@ -122,13 +124,11 @@ window.categoryAudioUpload = categoryAudioUpload = (e) ->
     complete: (x, t) ->
       if x.status == 200
         res = JSON.parse x.responseText
-
-        if $(activeCat).parent().children('audio').length == 0
-          $(activeCat).parent().prepend '<audio controls="controls" class="audioPlayer"><source src="/uploads/' + res.ref + '" type="audio/mpeg"> </audio>'
-        else
-          ap = $(activeCat).parent().children('audio')
-          $(ap).attr 'src', '/uploads/' + res.ref
-          ap.load
+        $(activeCat).parent().parent().find('button.clear-cat-audio-btn').show();
+        console.log "the parent", $(activeCat).parent()
+        ap = $(activeCat).parent().children('audio')
+        $(ap).attr 'src', '/uploads/' + res.ref
+        ap.load
         #end of if-statement
 #end of the function
 
@@ -175,6 +175,10 @@ window.handleDeleteBtn = handleDeleteBtn = (e) ->
         $('#question-bar-' + data.id).remove()
     })
 #end of handling the delete-button
+
+
+
+
 
 
 #method handling the sorting of categories
@@ -459,15 +463,18 @@ questionnaireInit = (e) ->
   #ajaxSubmit
   window.uploadQuestImg = uploadQuestImg = (e) ->
     activeQuest = this
+
     $(this).parent().ajaxSubmit
       beforeSubmit: (a, f, o) ->
         o.dataType = 'json'
       complete: (x, t) ->
         #console.log x
         if x.status == 200
+          console.log($(activeQuest))
+          $(activeQuest).parent().parent().parent().find('.clear-question-img-btn').show();
           imgRes = JSON.parse x.responseText
           $(activeQuest).parent().parent().siblings('.questionImgWrapper').html('')
-          $(activeQuest).parent().parent().siblings('.questionImgWrapper').append '<p><img src="/uploads/' + imgRes.ref + '" > </p>'
+          $(activeQuest).parent().parent().siblings('.questionImgWrapper').append '<p><img src="/uploads/' + imgRes.ref + '" class="qImg"> </p>'
         else
       #end of the complete function
   #end of the uploadQuestImg
@@ -475,12 +482,14 @@ questionnaireInit = (e) ->
   #code for handling the audio upload
   window.uploadQuestAudio = uploadQuestAudio = (e) ->
     activeQuest = this
+    console.log('active', $(activeQuest).parent().parent().parent())
     $(this).parent().ajaxSubmit
       beforeSubmit: (a, f, o) ->
         o.dataType = 'json'
       complete: (x, t) ->
         console.log x.responseText
         if x.status == 200
+          $(activeQuest).parent().parent().parent().find('.clear-question-audio-btn').show();
           audRes = JSON.parse x.responseText
           $(activeQuest).parent().parent().siblings('.questionAudioPlayer').html('')
           $(activeQuest).parent().parent().siblings('.questionAudioPlayer').append '<audio controls="controls" src="/uploads/' + audRes.ref + '"></audio>'
@@ -529,6 +538,73 @@ questionnaireInit = (e) ->
     window.loadResponseOptionMenu()
 
     $('#editRespOptForm').css 'display', 'block'
+  )
+
+  $('.clear-cat-img-btn').on('click', (e) ->
+    fileInput = $('#category-' + $(e.target).attr('data-categoryid') + " #category_image")
+    fileInput.replaceWith(fileInput.val('').clone(true));
+    imgTag = $('#category-' + $(e.target).attr('data-categoryid') + ' .catImg')
+    imgTag.attr('src', '')
+    imgTag.hide()
+    $.post '/categories/remove_image', cat_id : $(e.target).attr('data-categoryid'),
+      (data) ->
+        console.log "image removed", data
+        $(e.target).hide()
+        return
+    return;
+  )
+
+  $('.clear-cat-audio-btn').on('click', (e) ->
+    fileInput = $('#category-' + $(e.target).attr('data-categoryid') + " #category_audio")
+    fileInput.replaceWith(fileInput.val('').clone(true));
+    audioTag = $('#category-' + $(e.target).attr('data-categoryid') + ' audio')
+    audioTag.attr('src', '')
+    #imgTag.hide()
+    $.post '/categories/remove_audio', cat_id : $(e.target).attr('data-categoryid'),
+      (data) ->
+        console.log "audio removed", data
+        console.log "hiding.. ", $(e.target)
+        $(e.target).hide()
+        return
+    return;
+  )
+
+  $('.clear-question-img-btn').on('click', (e) ->
+    target = $(e.target)
+    question = $('#question-bar-' + target.attr('data-questionId'))
+    fileInput = question.find('input#question_image')
+    console.log(fileInput)
+    # Empty file input
+    fileInput.replaceWith(fileInput.val('').clone(true));
+
+    imgTag = question.find('.qImg')
+    imgTag.attr('src', '')
+    imgTag.hide()
+    $.post '/questions/remove_image', q_id : target.attr('data-questionId'),
+      (data) ->
+        console.log "image removed", data
+        target.hide()
+        return
+    return;
+  )
+
+  $('.clear-question-audio-btn').on('click', (e) ->
+    target = $(e.target)
+    question = $('#question-bar-' + target.attr('data-questionId'))
+    fileInput = question.find('input#question_audio')
+    console.log(fileInput)
+    # Empty file input
+    fileInput.replaceWith(fileInput.val('').clone(true));
+
+    audioTag = question.find('audio')
+    audioTag.attr('src', '')
+    #audioTag.hide()
+    $.post '/questions/remove_audio', q_id : target.attr('data-questionId'),
+      (data) ->
+        console.log "audio removed", data
+        target.hide()
+        return
+    return;
   )
 
   $('.addExistingCategory').on 'click', (e) ->
