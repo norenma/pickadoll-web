@@ -24,6 +24,14 @@ class QuestionnairesController < ApplicationController
     # @questionnairesWithResults = Questionnaire.find()
   end
 
+  def update_time(id)
+    @questionnaire = Questionnaire.find(id)
+    @questionnaire.update(updated_at: DateTime.now)
+    @questionnaire.save
+    puts("updated!")
+    puts(@questionnaire)
+  end
+
   def new
     @questionnaire = Questionnaire.new
     # Just create the questionnaire
@@ -36,6 +44,7 @@ class QuestionnairesController < ApplicationController
     logger.info "params: #{questionnaire_params}"
 
     if @questionnaire.update(questionnaire_params)
+      update_time(params[:id])
       redirect_to questionnaires_path
     else
       render 'edit'
@@ -171,7 +180,7 @@ class QuestionnairesController < ApplicationController
 
   def add_new_category
     @qid = params[:id]
-
+    update_time(@qid)
     @category = Category.new
     @category.order = last_category_order_for_id(@qid)
     @category.name = 'Ny kategori'
@@ -184,7 +193,7 @@ class QuestionnairesController < ApplicationController
 
   def update_category_order
     @cat_order = params[:catOrder]
-
+    update_time(params[:id])
     @cat_order.each_with_index do |e, i|
       c = Category.find(e)
       c.order = i
@@ -198,7 +207,7 @@ class QuestionnairesController < ApplicationController
     questionnaire_id = params[:id]
     category_id = params[:cat_id]
     logger.debug "Qid: #{questionnaire_id}, Catid: #{category_id}"
-
+    update_time(params[:id])
     c = Category.find(category_id)
 
     # Copy category
@@ -224,6 +233,7 @@ class QuestionnairesController < ApplicationController
     questionnaire_id = params[:id]
     category_id = params[:cat_id]
     question_id = params[:quest_id]
+    update_time(params[:id])
     logger.debug "Qid: #{questionnaire_id}, Catid: #{category_id}, Questid: #{question_id}"
 
     c = Category.find(category_id)
@@ -241,7 +251,7 @@ class QuestionnairesController < ApplicationController
   def set_response_option_for_all_questions
     questionnaire_id = params[:id]
     response_option_id = params[:responseOption]
-
+    update_time(params[:id])
     @questionnaire = Questionnaire.find(params[:id])
     @categories = Category.where(questionnaire_id_id: params[:id]).order(order: :asc)
     @cat_ids = []

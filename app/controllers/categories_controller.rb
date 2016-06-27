@@ -10,6 +10,9 @@ class CategoriesController < ApplicationController
   def update_time(id)
     @questionnaire = Questionnaire.find(id)
     @questionnaire.update(updated_at: DateTime.now)
+    @questionnaire.save
+    puts("updated!")
+    puts(@questionnaire)
   end
 
   def update

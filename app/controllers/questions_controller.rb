@@ -15,10 +15,23 @@ class QuestionsController < ApplicationController
     # @question.media = Media.new
   end
 
+  def update_time(id)
+    @question = Question.find(id)
+    @cat = Category.find(@question.category_id)
+    @questionnaire = Questionnaire.find(@cat.questionnaire_id_id)
+    @questionnaire.update(updated_at: DateTime.now)
+    puts("updated!")
+    puts(@questionnaire)
+    @questionnaire.save
+
+  end
+
   def create
     @question = Question.new(question_params)
     @question.category_id = params[:category_id]
     @question.save
+
+    update_time(@question.id)
 
     @image_file = params[:image_file]
 
@@ -50,6 +63,7 @@ class QuestionsController < ApplicationController
     @question = Question.find(params[:id])
     #:question_id => @q_id
     @media_files = MediaFile.find_by question_id: @q_id
+    puts("edit")
   end
 
   def show
@@ -60,7 +74,7 @@ class QuestionsController < ApplicationController
   def update
     @question = Question.find(params[:id])
     # @media_files = @question.media_files.update(media_file_params)
-
+    update_time(@question.id)
     if params[:question_image]
       @quest_img = params[:question_image]
       # upload image file to the uploads folder
@@ -98,6 +112,7 @@ class QuestionsController < ApplicationController
     p('remove img!')
     @q_id = params[:q_id]
     @q = Question.find(@q_id)
+    update_time(@q_id)
     @q.question_image = 0
     @q.save
     render json: @q
@@ -107,6 +122,8 @@ class QuestionsController < ApplicationController
     p('remove audio!')
     @q_id = params[:q_id]
     @q = Question.find(@q_id)
+    update_time(@q_id)
+
     @q.question_audio = 0
     @q.save
     render json: @q
@@ -141,6 +158,8 @@ class QuestionsController < ApplicationController
         @quest = Question.find(@q_id)
         @quest.question_image = @img_id
         @quest.save
+        update_time(@quest.id)
+
         @media_res = MediaFile.find(@img_id)
         render json: @media_res
       end
@@ -175,6 +194,8 @@ class QuestionsController < ApplicationController
         @quest = Question.find(@q_id)
         @quest.question_audio = @img_id
         @quest.save
+        update_time(@quest.id)
+
         @media_res = MediaFile.find(@img_id)
         render json: @media_res
       end
@@ -183,6 +204,8 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
+    update_time(params[:id])
+
     @question = Question.find(params[:id])
     @question.destroy
 
