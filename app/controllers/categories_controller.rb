@@ -220,9 +220,9 @@ class CategoriesController < ApplicationController
     questions = Question.where(category_id: id)
     questions.each(&:destroy)
 
-    category = Category.find(id)
+    @category = Category.find(id)
     update_time(@category.questionnaire_id_id)
-    category.destroy
+    @category.destroy
 
     # Send some feedback
     feedback = { 'status' => 'removed', 'id' => params[:id],
