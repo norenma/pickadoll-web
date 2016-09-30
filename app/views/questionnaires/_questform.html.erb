@@ -265,6 +265,26 @@
 	</div>
 </div>
 
+<!-- A little form for adding new result category -->
+<div id="editResultCategories" class="popupForm">
+	<div id="editRespContent" class="popupContent">
+		<h2>Result-kategorier</h2>
+		<ul>
+			<li>
+				<a href="#" class="close-button">
+					<%= image_tag("close_button.png", alt: "Close button") %>
+				</a>
+			</li>
+		</ul>
+
+		<ul id="result-cat-list" class="ui-sortable">
+		</ul>
+
+		<input type="text" id="newResultCatText" >
+		<input id="newResultCatInput" data-questionnaireid="<%= @questionnaire.id %>" type="button" value="Lägg till">
+	</div>
+</div>
+
 <!-- A little form for adding existing categories -->
 <div id="addExCatForm" class="popupForm">
 	<div id="addExCatContent" class="popupContent">

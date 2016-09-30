@@ -2,20 +2,36 @@
 	<p class="questionnaire-name">
 		<%= f.text_field :name %>
 	</p>
-	<p>
-		<%= f.label :description, 'Beskrivning ' %>
-		<%= f.text_area :description %>
-	</p>
 
-	<p>
-		<label>Svarsalternativ för alla frågor</label> <br/>
-		<select name="setResponseOptionForAll" id="setResponseOptionForAll" data-questionnaireid="<%= @questionnaire.id %>">
-			<option value="nil">Välj ett alternativ för alla frågor</option>
-			<% @response_options.each do |option| %>
-				<option value="<%= option.id %>"><%= option.name %></option>
-			<% end %>
-		</select>
+	<div class="fixed-width container-fluid">
+		<div class="row">
 
-		<input type="button" value="Redigera svarsalternativ" class="editRespAllOption" style="margin-top: -10px; ">
-	</p>
-<% end %>
+
+			<div class="col-md-5 col-lg-5 col-sm-12 col-sx-12">
+				<p>
+					<%= f.label :description, 'Beskrivning ' %>
+						<%= f.text_area :description %>
+				</p>
+			</div>
+
+
+			<div class="col-md-3 col-lg-3 col-sm-6 col-sx-6">
+				<label>Svarsalternativ för alla frågor</label>
+				<select name="setResponseOptionForAll" id="setResponseOptionForAll" data-questionnaireid="<%= @questionnaire.id %>">
+						<option value="nil">Välj ett alternativ för alla frågor</option>
+						<% @response_options.each do |option| %>
+							<option value="<%= option.id %>"><%= option.name %></option>
+						<% end %>
+					</select>
+				<input type="button" value="Redigera svarsalternativ" class="editRespAllOption">
+			</div>
+
+			<div class="col-md-3 col-lg-3 col-sm-6 col-sx-6">
+				<label for="toggle-result-cats"> Alternativa resultkategorier </label><input id="toggle-result-cats" type="checkbox" value="">
+				<input type="button" value="Lägg till resultat-kategori" data-questionnaireid="<%= @questionnaire.id %>" class="showAddResultCat"
+					style="margin-top: -10px; ">
+			</div>
+		</div>
+	</div>
+
+	<% end %>

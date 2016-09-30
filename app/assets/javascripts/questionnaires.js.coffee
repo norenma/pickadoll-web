@@ -254,6 +254,21 @@ window.responseOptionSelected = responseOptionSelected = (e) ->
       console.log t
 #end of responseOptionSelected
 
+window.addResultCat = addResultCat = (e) ->
+  console.log("add result", e.target)
+  questionnaireId = e.target.getAttribute('data-questionnaireid')
+  value = $('#newResultCatText').val()
+  console.log value
+  $.post '/result_categories/new',
+    {
+      'questionnaire_id': questionnaireId
+      'name': value
+      },
+    (data) ->
+      console.log 'success'
+      return
+  return
+
 
 #Function for loading a response option set into the edit
 #view
@@ -292,6 +307,42 @@ window.loadResponseOptionMenu = loadResponseOptionMenu = ->
 
   $('#respOptionsEditDropdown').off().on 'change', loadResponseOptionEdit
 #end
+
+#Function for showing the template to add a new result category
+window.loadEditResultCategories = loadEditResultCategories = ->
+  console.log "loadEditResultCategories"
+  console.log $(this)
+  questionnaire_id = $('.showAddResultCat').attr('data-questionnaireid')
+  console.log "id", questionnaire_id
+  $.ajax({
+    'url' : '/result_categories/list/' + questionnaire_id
+    'success' : (data) ->
+      res = data
+      # console.log res
+
+      for opt in res
+        do (opt) ->
+          console.log opt
+          $('#result-cat-list').append '<li> - ' + opt.name + '</li>' + '<input class="remove-result-cat" data-result_cat_id="' + opt.id + '" type="button" value="[Ta bort]">'
+          bindRemove = ->
+            console.log "bind"
+            $('.remove-result-cat').on 'click', window.removeResultCat
+            return
+          window.setTimeout bindRemove(), 1000
+      #end of for
+  })
+#end
+
+window.removeResultCat = removeResultCat = ->
+  console.log "remove cat!"
+  id = $(this).attr('data-result_cat_id')
+  $.ajax({
+    'url' : '/result_categories/deleteItem/' + id
+    'type' : 'DELETE'
+    'success' : (data) ->
+      console.log "success!"
+  })
+  return
 
 # Function for updating all response option selectors in questions
 window.updateResponseOptionSelectors = updateResponseOptionSelectors = ->
@@ -540,6 +591,14 @@ questionnaireInit = (e) ->
     $('#editRespOptForm').css 'display', 'block'
   )
 
+  $('.showAddResultCat').on('click', (e) ->
+    e.preventDefault()
+    console.log "Hej"
+    window.loadEditResultCategories()
+
+    $('#editResultCategories').css 'display', 'block'
+  )
+
   $('.clear-cat-img-btn').on('click', (e) ->
     fileInput = $('#category-' + $(e.target).attr('data-categoryid') + " #category_image")
     fileInput.replaceWith(fileInput.val('').clone(true));
@@ -638,6 +697,11 @@ questionnaireInit = (e) ->
     e.preventDefault()
     $('#editRespOptForm').css 'display', 'none'
 
+  $('.close-button').on 'click', (e) ->
+    e.preventDefault()
+    $('.popupForm').css 'display', 'none'
+    return
+
   $('.closeAddCatPopup').on 'click', (e) ->
     e.preventDefault()
     $('#addExCatForm').css 'display', 'none'
@@ -650,6 +714,7 @@ questionnaireInit = (e) ->
   $('form.changes input, form.changes textarea').on 'keyup', handleChangeOnInput
 
   $('.newResponseOptionSet').on 'click', addNewResponseOptionSet
+  $('#newResultCatInput').on 'click', addResultCat
 
   loadResponseOptionMenu()
   #setup underscore settings

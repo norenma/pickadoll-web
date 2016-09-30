@@ -14,6 +14,9 @@
  *= require_self
  */
 
+ @import "bootstrap-sprockets";
+@import "bootstrap";
+
 * {
 	padding: 0;
 	margin: 0;
@@ -122,6 +125,7 @@ h1:hover {
 	background-color: #f8f8f8;
 	border: 1px solid #f8f8f8;
 }
+
 
 .questionnaire-name input[type="text"]:hover {
 	font-size: 2em;

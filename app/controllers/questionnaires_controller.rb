@@ -61,7 +61,7 @@ class QuestionnairesController < ApplicationController
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
 
     @response_options = ResponseOption.visible_response_options(session[:user_id])
-
+    @result_categorys = ResultCategory.all 
     if authenticate_user
       @curr_user = User.find(session[:user_id])
       @username = @curr_user.username
@@ -113,6 +113,7 @@ class QuestionnairesController < ApplicationController
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
 
     @response_options = ResponseOption.visible_response_options(session[:user_id])
+    @result_categorys = ResultCategory.all 
 
     # if you want to create a new response option
     @response_option = ResponseOption.new

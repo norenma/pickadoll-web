@@ -31,6 +31,9 @@ gem 'bcrypt', '~> 3.1.7'
 # Use unicorn as the app server
 gem 'unicorn'
 gem 'sshkit-sudo'
+
+gem 'bootstrap-sass', '~> 3.2.0'
+gem 'autoprefixer-rails'
 # Use dotenv-rails for environment variables
 # gem 'dotenv-rails'
 

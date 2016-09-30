@@ -32,6 +32,11 @@ Rails.application.routes.draw do
   post 'categories/remove_image'
   post 'categories/remove_audio'
 
+  # Routes to edit the result-categories
+  post 'result_categories/new'
+  get 'result_categories/list/:questionnaire', to: 'result_categories#list'
+  delete 'result_categories/deleteItem/:id', to: 'result_categories#remove'
+
 
   # Route for cloning questionnaire
   post 'questionnaires/:id/clone', to: 'questionnaires#clone', as: 'clone_questionnaire'
