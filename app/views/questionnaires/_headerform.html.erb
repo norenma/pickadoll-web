@@ -3,11 +3,11 @@
 		<%= f.text_field :name %>
 	</p>
 
-	<div class="fixed-width container-fluid">
+	<div class="fixed-width container-fluid header-controls">
 		<div class="row">
 
 
-			<div class="col-md-5 col-lg-5 col-sm-12 col-sx-12">
+			<div class="col-md-6 col-lg-6 col-sm-12 col-sx-12">
 				<p>
 					<%= f.label :description, 'Beskrivning ' %>
 						<%= f.text_area :description %>
@@ -15,7 +15,7 @@
 			</div>
 
 
-			<div class="col-md-3 col-lg-3 col-sm-6 col-sx-6">
+			<div class="col-md-3 col-lg-3 col-sm-6 col-sx-6 answer-all-questions-container">
 				<label>Svarsalternativ för alla frågor</label>
 				<select name="setResponseOptionForAll" id="setResponseOptionForAll" data-questionnaireid="<%= @questionnaire.id %>">
 						<option value="nil">Välj ett alternativ för alla frågor</option>
@@ -26,8 +26,9 @@
 				<input type="button" value="Redigera svarsalternativ" class="editRespAllOption">
 			</div>
 
-			<div class="col-md-3 col-lg-3 col-sm-6 col-sx-6">
-				<label for="toggle-result-cats"> Alternativa resultkategorier </label><input id="toggle-result-cats" type="checkbox" value="">
+			<div class="col-md-3 col-lg-3 col-sm-6 col-sx-6 result-cats-container">
+				<%= check_box_tag(:toggle_use_result_cat) %>
+				<%= label_tag(:toggle_use_result_cat, "Alternativa resultkategorier") %>
 				<input type="button" value="Lägg till resultat-kategori" data-questionnaireid="<%= @questionnaire.id %>" class="showAddResultCat"
 					style="margin-top: -10px; ">
 			</div>

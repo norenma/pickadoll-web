@@ -39,8 +39,7 @@ ul {
 	margin: 0;
 }
 
-li {
-}
+
 
 p > a, li > a, td > a {
 	/*8cc3f6*/
@@ -62,7 +61,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 /*Page header settings */
 .page-header {
-	line-height: 3em;
+	/*line-height: 3em;*/
 	background-color: #f8f8f8;
 	position: relative;
 	border-bottom: 1px solid #ddd;
@@ -86,6 +85,8 @@ h1, h2, h3, h4, h5, h6 {
 	-webkit-transition: all 0.1s ease-out;
 	padding: 0 .75em 0 .75em;
 	z-index: 400;
+	font-size: 1.2em;
+	line-height: 3em;
 }
 
 .user-info-list img {
@@ -116,10 +117,6 @@ h1, h2, h3, h4, h5, h6 {
 	background-color: #f8f8f8;
 }
 
-h1:hover {
-
-}
-
 .questionnaire-name input[type="text"] {
 	font-size: 2em;
 	background-color: #f8f8f8;
@@ -134,8 +131,6 @@ h1:hover {
 	background-color: #fcfcfc;
 }
 
-form p {
-}
 
 label {
 	text-align: right;

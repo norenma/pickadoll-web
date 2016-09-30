@@ -12,12 +12,14 @@ body {
 #quest-header {
 	margin-top : 10px;
 
+
 	form {
 		display: inline-block;
 		min-width: 20px;
 		vertical-align: top;
 		padding: 0;
-		margin: 5px 0 -5px 0;
+		margin-left: 5%;
+		width: 90%;
 
 		p {
 			vertical-align: top;
@@ -26,8 +28,20 @@ body {
 
 		textarea {
 		 	margin: 0;
-		 	min-width: 300px;
-		 	min-height: 23px;
+		 	min-width: 500px;
+		 	min-height: 45px;
+		}
+
+		.answer-all-questions-container {
+			margin: 0px;
+		}
+
+		.result-cats-container {
+			margin-top: 15px;
+		}
+
+		.result-cats-container label {
+			display: inline;
 		}
 
 		input[type="checkbox"], input[type="submit"] {
@@ -40,12 +54,18 @@ body {
 			background-color: #ddd;
 			padding: .25em .75em .25em .75em; */
 		}
+
+		.header-controls {
+			padding: 0;
+		}
+
+
 	}
 
 	p, label, input {
 		display: inline-block;
 		min-width: 50px;
-		vertical-align: top;
+/*		vertical-align: top;*/
 		text-align: left;
 	}
 
@@ -69,6 +89,10 @@ body {
 
 	#questionnaire_name {
 		font-size: 1.75em;
+	}
+
+	.home-btn {
+		position: absolute;
 	}
 
 	.home-btn a {

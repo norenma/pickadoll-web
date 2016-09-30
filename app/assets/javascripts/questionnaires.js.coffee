@@ -256,7 +256,9 @@ window.responseOptionSelected = responseOptionSelected = (e) ->
 
 window.addResultCat = addResultCat = (e) ->
   console.log("add result", e.target)
-  questionnaireId = e.target.getAttribute('data-questionnaireid')
+  inputElement = $(e.target).find('#newResultCatInput')
+  console.log "inputElement", inputElement[0]
+  questionnaireId = inputElement[0].getAttribute('data-questionnaireid')
   value = $('#newResultCatText').val()
   console.log value
   $.post '/result_categories/new',
@@ -266,8 +268,12 @@ window.addResultCat = addResultCat = (e) ->
       },
     (data) ->
       console.log 'success'
+      window.loadEditResultCategories()
+      $('#newResultCatText').val('')
       return
   return
+
+
 
 
 #Function for loading a response option set into the edit
@@ -319,6 +325,7 @@ window.loadEditResultCategories = loadEditResultCategories = ->
     'success' : (data) ->
       res = data
       # console.log res
+      $('#result-cat-list').html('');
 
       for opt in res
         do (opt) ->
@@ -341,6 +348,7 @@ window.removeResultCat = removeResultCat = ->
     'type' : 'DELETE'
     'success' : (data) ->
       console.log "success!"
+      window.loadEditResultCategories()
   })
   return
 
@@ -714,7 +722,11 @@ questionnaireInit = (e) ->
   $('form.changes input, form.changes textarea').on 'keyup', handleChangeOnInput
 
   $('.newResponseOptionSet').on 'click', addNewResponseOptionSet
-  $('#newResultCatInput').on 'click', addResultCat
+  $('#new-result-cat-form').on 'submit', addResultCat
+
+  $('#toggle_use_result_cat').on 'change', (e) ->
+    console.log "hej"
+    return 
 
   loadResponseOptionMenu()
   #setup underscore settings

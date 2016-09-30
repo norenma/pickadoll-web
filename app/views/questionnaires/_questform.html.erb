@@ -208,6 +208,36 @@
 								<input type="button" value="Redigera svarsalternativ" class="editRespOption">
 							</p>
 						</div>
+
+
+						<!--Result category options-->
+						<div class="result-category-selection">
+							<label>Resultat-kategori</label>
+							<div class="result-category-selection-form">
+								<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
+											remote: true, html: {multipart: true, class: 'changes'} do |f| %>
+									<% visible_result_cat_options = @result_categorys.select { |r| r.questionnaire_id == c.questionnaire_id_id } %>
+										<%=
+											collection_select(:question, :result_cat, visible_result_cat_options, 
+												:id, :name, {prompt:true}, {'data-question-id' => q.id } )
+										%>
+							</div>
+
+							<% if q.response_id %>
+								<div class="responseOptions">
+									<ul>
+
+									</ul>
+								</div>
+
+								<% end %>
+									<% end %>
+
+										<p>
+											<input type="button" value="Redigera resultat-kategorier" class="showAddResultCat">
+										</p>
+
+						</div>
 					</div>
 				</li>
 			<% end %>
@@ -279,9 +309,10 @@
 
 		<ul id="result-cat-list" class="ui-sortable">
 		</ul>
-
-		<input type="text" id="newResultCatText" >
-		<input id="newResultCatInput" data-questionnaireid="<%= @questionnaire.id %>" type="button" value="Lägg till">
+		<form action="#" id="new-result-cat-form">
+			<input type="text" id="newResultCatText" >
+			<input id="newResultCatInput" data-questionnaireid="<%= @questionnaire.id %>" type="submit" value="Lägg till">
+		</form>
 	</div>
 </div>
 
