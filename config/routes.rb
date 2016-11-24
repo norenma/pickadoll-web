@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   post 'questionnaires/:id/categories/:cat_id/add', to: 'questionnaires#add_existing_category'
   post 'questionnaires/:id/categories/:cat_id/questions/:quest_id/add', to: 'questionnaires#add_existing_question'
 
+
   # set response option for all questions in a questionnaire
   post 'questionnaires/:id/setResponseOptionForAllQuestions', to: 'questionnaires#set_response_option_for_all_questions'
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160930112048) do
+ActiveRecord::Schema.define(version: 20161010125329) do
 
   create_table "answers", force: true do |t|
     t.string   "tester_id"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 20160930112048) do
     t.integer  "order"
     t.integer  "question_image"
     t.integer  "question_audio"
+    t.integer  "represent_category_id"
   end
 
   add_index "questions", ["category_id"], name: "index_questions_on_category_id", using: :btree

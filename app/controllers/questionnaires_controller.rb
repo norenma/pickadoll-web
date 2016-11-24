@@ -285,7 +285,7 @@ class QuestionnairesController < ApplicationController
 
   def questionnaire_params
     # params.require(:question).permit(:name, :text, :media_files)
-    params.require(:questionnaire).permit(:name, :description)
+    params.require(:questionnaire).permit(:name, :description, :has_result_categories)
   end
 
   def user_right_to_questionnaire(user_id, questionnaire_id)

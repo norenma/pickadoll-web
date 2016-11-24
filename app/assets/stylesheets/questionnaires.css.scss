@@ -1,6 +1,5 @@
-form {
+form {}
 
-}
 html {
 	min-height: 100%;
 }
@@ -10,9 +9,7 @@ body {
 }
 
 #quest-header {
-	margin-top : 10px;
-
-
+	margin-top: 10px;
 	form {
 		display: inline-block;
 		min-width: 20px;
@@ -20,33 +17,26 @@ body {
 		padding: 0;
 		margin-left: 5%;
 		width: 90%;
-
 		p {
 			vertical-align: top;
-		 	/*line-height: 50px;*/
+			/*line-height: 50px;*/
 		}
-
 		textarea {
-		 	margin: 0;
-		 	min-width: 500px;
-		 	min-height: 45px;
+			margin: 0;
+			min-width: 500px;
+			min-height: 45px;
 		}
-
 		.answer-all-questions-container {
 			margin: 0px;
 		}
-
 		.result-cats-container {
 			margin-top: 15px;
 		}
-
 		.result-cats-container label {
 			display: inline;
 		}
-
-		input[type="checkbox"], input[type="submit"] {
-		}
-
+		input[type="checkbox"],
+		input[type="submit"] {}
 		input[type="submit"] {
 			position: relative;
 			min-width: 50px;
@@ -54,47 +44,43 @@ body {
 			background-color: #ddd;
 			padding: .25em .75em .25em .75em; */
 		}
-
 		.header-controls {
 			padding: 0;
 		}
-
-
 	}
-
-	p, label, input {
-		display: inline-block;
+	p,
+	label,
+	input {
+		//display: inline-block;
 		min-width: 50px;
-/*		vertical-align: top;*/
+		/*		vertical-align: top;*/
 		text-align: left;
 	}
-
 	.editRespAllOption {
-		margin-top: -30px;
-		padding: 0;
+			padding: 0;
+			display: block;
 	}
-
-	#setResponseOptionForAll{
+	.showAddResultCat {
+		display: block;
+		
+	}
+	#setResponseOptionForAll {
 		vertical-align: top;
 	}
-
 	label {
 		font-weight: 300;
 		display: block;
 	}
-
-	input, textarea {
+	input,
+	textarea {
 		font-size: .9em;
 	}
-
 	#questionnaire_name {
 		font-size: 1.75em;
 	}
-
 	.home-btn {
 		position: absolute;
 	}
-
 	.home-btn a {
 		display: inline-block;
 		position: relative;
@@ -113,7 +99,6 @@ body {
 			margin: 12px 0 0 11px;
 		}
 	}
-
 	.home-btn a:hover {
 		opacity: 0.7;
 	}
@@ -122,7 +107,6 @@ body {
 #quest-content {
 	display: block;
 	position: relative;
-
 	.category {
 		display: block;
 		min-width: 90%;
@@ -135,21 +119,17 @@ body {
 		transition: all ease-out 0.2s;
 		-webkit-transition: all ease-out 0.2s;
 		/*padding: .25em; */
-
 		.category-bar {
 			padding: .5em;
-
 			/*input {
 				font-size: 1.5em !important;
 			}*/
 		}
-
 		.toolbar {
 			position: absolute;
 			top: 5px;
 			right: 10px;
 			display: none;
-
 			ul li {
 				display: inline-block;
 				vertical-align: top;
@@ -158,7 +138,8 @@ body {
 					display: inline-block;
 					background: #ededed;
 					border: 1px solid #ccc;
-					width: 32px; height: 22px;
+					width: 32px;
+					height: 22px;
 					padding: 2px;
 					opacity: .6;
 					box-shadow: 0px 0px 4px #ddd inset;
@@ -175,8 +156,8 @@ body {
 				}
 			}
 		}
-
-		.question-bar, .category-bar {
+		.question-bar,
+		.category-bar {
 			font-size: 1em;
 			padding: .5em;
 			margin: -1px 0;
@@ -185,17 +166,14 @@ body {
 			border-top: 1px solid #eee;
 			border-bottom: 1px solid #eee;
 			vertical-align: top;
-
-			.question-content, .category-content {
+			.question-content,
+			.category-content {
 				display: none;
 				position: relative;
 				margin: 0 2em;
 				text-align: left;
 				max-width: 920px;
-
-				img {
-				}
-
+				img {}
 				label {
 					margin-top: 1em;
 					font-size: 1em;
@@ -203,18 +181,17 @@ body {
 					text-align: left;
 					color: rgba(0, 0, 0, 0.54);
 				}
-
-				.questionImgForm, .questionAudioForm, .questionOptionsForm {
+				.questionImgForm,
+				.questionAudioForm,
+				.questionOptionsForm {
 					input[type="file"] {
 						display: block;
 						margin: 0.5em 0;
 					}
-
 					select {
 						margin: 0.5em 0;
 					}
 				}
-
 				textarea {
 					min-width: 550px;
 					border: 1px solid #fff;
@@ -223,96 +200,84 @@ body {
 					margin: 0.5em 0;
 					// text-align: center;
 				}
-
-				textarea:hover, textarea:focus {
+				textarea:hover,
+				textarea:focus {
 					border: 1px dashed #ddd;
 				}
 			}
-
 			.question-name {
 				input[type="text"] {
 					border: 1px solid #fefefe;
 					min-width: 200px;
 				}
-
-				input[type="text"]:hover, input[type="text"]:focus {
+				input[type="text"]:hover,
+				input[type="text"]:focus {
 					border: 1px dashed #ccc;
 				}
 			}
-
-			.questionImgWrapper, .category-image-holder {
+			.questionImgWrapper,
+			.category-image-holder {
 				// text-align: center;
 				position: relative;
 			}
 		}
-
 		.editing {
 			.question-content {
 				display: block;
 			}
 		}
-
 		.question-drop-placeholder {
 			background-color: #eee;
 			height: 30px;
 		}
 	}
-
 	.moveable:hover {
 		cursor: move;
 	}
-
 	/*Style things for the category*/
 	.category-name input[type="text"] {
 		border: 1px solid #fefefe !important;
 		font-size: 1.35em;
 		border-bottom: 1px solid #ddd;
 	}
-
-	.category-bar input[type="text"]:hover, .category-bar input[type="text"]:focus {
+	.category-bar input[type="text"]:hover,
+	.category-bar input[type="text"]:focus {
 		border: 1px dashed #ccc !important;
 	}
-
 	.category-content {
 		display: none;
 	}
-
 	.category.editing {
-
 		.category-content {
 			display: block;
-
-
-			.category-image-holder, .category-text-holder, .category-audio-holder {
+			.category-image-holder,
+			.category-text-holder,
+			.category-audio-holder {
 				input[type="file"] {
 					display: block;
 					margin: 0.5em 0;
 				}
-
 				select {
 					margin: 0.5em 0;
 				}
 			}
 		}
 	}
-
 	.editing {
 		box-shadow: 0px 0px 5px #999;
 		z-index: 100;
 		border: 1px solid #ddd;
 	}
-
-	.question-bar img, .category img {
+	.question-bar img,
+	.category img {
 		max-height: 375px;
 		display: inline-block;
 		position: relative;
 		margin: 10px auto;
 	}
-
 	.question-bar.editing div.drag-indicator {
 		display: block;
 	}
-
 	.drag-indicator {
 		top: 5px;
 		left: 50%;
@@ -325,27 +290,24 @@ body {
 		background-image: url('dotted_things_small.png');
 		background-size: 20px 20px;
 	}
-
 	.selected-category {
 		@extend .category;
 		opacity: 0.65;
 	}
-
 }
 
 .popupForm {
 	display: none;
 	position: fixed;
-	top: 0px; left: 0px;
+	top: 0px;
+	left: 0px;
 	width: 100%;
 	min-height: 100%;
 	background: rgba(0, 0, 0, 0.6);
 	z-index: 499;
-
 	h2 {
 		margin-bottom: 0.5em;
 	}
-
 	.respOptAudio {
 		audio {
 			margin: auto;
@@ -371,15 +333,18 @@ body {
 	border: 1px solid #ccc;
 }
 
-.popupContent ul li a.close-button, a.closeRespPopup, a.closeAddCatPopup, a.closeAddQuestPopup {
+.popupContent ul li a.close-button,
+a.closeRespPopup,
+a.closeAddCatPopup,
+a.closeAddQuestPopup {
 	position: absolute;
-	top: 5px; right: 5px;
+	top: 5px;
+	right: 5px;
 	opacity: .4;
-	width: 18px; height: 18px;
+	width: 18px;
+	height: 18px;
 	transition: opacity ease-in .2s;
 }
-
-
 
 .popupContent ul li a img {
 	max-height: 18px;
@@ -405,7 +370,8 @@ div.delete:hover {
 
 .popupContent .filtering-field {
 	position: absolute;
-	top: 5px; right: 33px;
+	top: 5px;
+	right: 33px;
 }
 
 .responseOptions li {
@@ -423,7 +389,6 @@ div.delete:hover {
 .responseOptionAvailability {
 	margin: 0.5em 0;
 	float: right;
-
 	p {
 		display: inline;
 	}
@@ -437,22 +402,23 @@ audio {
 	margin: 0px auto 10px auto;
 }
 
-button, input[type="button"] {
+button,
+input[type="button"] {
 	-webkit-appearance: none;
 	color: #0fcaaa;
 	background: rgba(0, 0, 0, 0);
-	display: inline-block;
 	padding: .75em;
 	border: 0px solid #000;
-
 }
 
-button:focus, input[type="button"]:focus {
+button:focus,
+input[type="button"]:focus {
 	box-shadow: none;
 	outline: none;
 }
 
-button:hover, input[type="button"]:hover {
+button:hover,
+input[type="button"]:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }
@@ -479,7 +445,7 @@ button:hover, input[type="button"]:hover {
 	margin: 0.5em 0;
 }
 
-.response-container, .result-cat-container {
+.response-container,
+.result-cat-container {
 	display: inline;
 }
-

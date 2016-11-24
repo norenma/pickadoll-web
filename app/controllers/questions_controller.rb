@@ -261,7 +261,7 @@ class QuestionsController < ApplicationController
 
   # definierar vilka parametrar som är tillåtna för question
   def question_params
-    params.require(:question).permit(:name, :text, :response_id)
+    params.require(:question).permit(:name, :text, :response_id, :represent_category_id)
   end
 
   # permitted params for media_files

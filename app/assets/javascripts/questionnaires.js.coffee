@@ -254,6 +254,16 @@ window.responseOptionSelected = responseOptionSelected = (e) ->
       console.log t
 #end of responseOptionSelected
 
+#resultCategorySelected
+window.resultCategorySelected = resultCategorySelected = (e) ->
+  console.log "Selected result category #{e.target.parentNode}"
+  $(e.target).parent().ajaxSubmit
+    beforeSubmit: (a, f, o) ->
+      o.dataType = 'json'
+    complete: (x, t) ->
+      console.log t
+#end of responseOptionSelected
+
 window.addResultCat = addResultCat = (e) ->
   console.log("add result", e.target)
   inputElement = $(e.target).find('#newResultCatInput')
@@ -694,6 +704,8 @@ questionnaireInit = (e) ->
     loadAddQuestionMenu(categoryId)
 
   $('.response_option_select').on 'change', responseOptionSelected
+  $('.result_category_select').on 'change', resultCategorySelected
+
 
   $('.addQuestionToCategory').on 'click', addNewQuestionToCategory
   $('.addCategory').on 'click', addNewCategoryToQuestionnaire
@@ -724,8 +736,11 @@ questionnaireInit = (e) ->
   $('.newResponseOptionSet').on 'click', addNewResponseOptionSet
   $('#new-result-cat-form').on 'submit', addResultCat
 
-  $('#toggle_use_result_cat').on 'change', (e) ->
-    console.log "hej"
+  $('#questionnaire_has_result_categories').on 'change', (e) ->
+    forms = $('.result-category-selection');
+    forms.toggle()
+
+    
     return 
 
   loadResponseOptionMenu()
