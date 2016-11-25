@@ -60,6 +60,7 @@ module Api
       # The questionnaire
       @quest = Questionnaire.find(@id)
       @categories = Category.where(questionnaire_id_id: @id).order(order: :asc)
+      @result_cats = ResultCategory.where(questionnaire_id: @id)
       # very important name is right yes no change or else break
       # trademark protected name yes
       @super_array_that_is_an_object = {
@@ -69,7 +70,8 @@ module Api
         'response_options' => {
         },
         'media_files' => {
-        }
+        },
+        'result_cats' => @result_cats
       }
 
       @categories.each do |x|
