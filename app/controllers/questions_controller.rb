@@ -18,7 +18,7 @@ class QuestionsController < ApplicationController
   def update_time(id)
     @question = Question.find(id)
     @cat = Category.find(@question.category_id)
-    @questionnaire = Questionnaire.find(@cat.questionnaire_id_id)
+    @questionnaire = Questionnaire.find(@cat.questionnaire_id)
     @questionnaire.update(updated_at: DateTime.now)
     puts("updated!")
     puts(@questionnaire)
@@ -231,7 +231,7 @@ class QuestionsController < ApplicationController
       # Ignore this question if it doesn't belong to a category
       next unless cat
 
-      questionnaire = Questionnaire.find(cat.questionnaire_id_id) rescue nil
+      questionnaire = Questionnaire.find(cat.questionnaire_id) rescue nil
       # Ignore this category if it doesn't belong to a questionnaire
       next unless questionnaire
 

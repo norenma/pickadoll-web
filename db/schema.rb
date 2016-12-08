@@ -28,28 +28,30 @@ ActiveRecord::Schema.define(version: 20161010125329) do
 
   add_index "answers", ["question"], name: "index_answers_on_question", using: :btree
   add_index "answers", ["questionnaire"], name: "index_answers_on_questionnaire", using: :btree
-  add_index "answers", ["tester_id", "question", "device_id", "answer_time"], name: "uniq_id", unique: true, using: :btree
   add_index "answers", ["user"], name: "index_answers_on_user", using: :btree
 
   create_table "categories", force: true do |t|
     t.string   "name"
     t.text     "description"
     t.integer  "order"
-    t.integer  "questionnaire_id_id"
+    t.integer  "questionnaire_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "image"
     t.integer  "audio"
   end
 
-  add_index "categories", ["questionnaire_id_id"], name: "index_categories_on_questionnaire_id_id", using: :btree
+  add_index "categories", ["questionnaire_id"], name: "index_categories_on_questionnaire_id", using: :btree
 
   create_table "media_files", force: true do |t|
     t.string   "ref"
     t.string   "media_type"
+    t.integer  "question_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "media_files", ["question_id"], name: "index_media_files_on_question_id", using: :btree
 
   create_table "questionnaires", force: true do |t|
     t.string   "name"

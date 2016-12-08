@@ -220,7 +220,7 @@
 							<div class="result-category-selection-form">
 								<%= form_for q, url: questionnaire_category_question_path(@questionnaire, c.id, q),
 											remote: true, html: {multipart: true, class: 'changes'} do |f| %>
-									<% visible_result_cat_options = @result_categorys.select { |r| r.questionnaire_id == c.questionnaire_id_id } %>
+									<% visible_result_cat_options = @result_categorys.select { |r| r.questionnaire_id == c.questionnaire_id } %>
 										<%=
 											collection_select(:question, :represent_category_id, visible_result_cat_options, 
 												:id, :name, {prompt:true, selected: q.represent_category_id}, {'data-question-id' => q.id, class: 'result_category_select' } )
@@ -584,7 +584,7 @@
 <script type="text/template" id="newCategoryTmp">
 	<li class="category" data-categoryid="[%= id %]" id="category-[%= id %]">
 		<div class="category-bar">
-			<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id_id %]/categories/[%= id %]" class="edit_category changes" data-remote="true" id="edit_category_[%= id %]" method="post">
+			<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id %]/categories/[%= id %]" class="edit_category changes" data-remote="true" id="edit_category_[%= id %]" method="post">
 			<div style="display:none">
 				<input name="utf8" type="hidden" value="✓">
 				<input name="_method" type="hidden" value="patch">
@@ -609,7 +609,7 @@
 			<div class="category-content">
 				<div class="category-text-holder">
 					<label>Kategoritext</label>
-					<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id_id %]/categories/[%= id %]" class="edit_category changes" data-remote="true" id="edit_category_[%= id %]" method="post">
+					<form accept-charset="UTF-8" action="/questionnaires/[%= questionnaire_id %]/categories/[%= id %]" class="edit_category changes" data-remote="true" id="edit_category_[%= id %]" method="post">
 						<div style="display:none">
 							<input name="utf8" type="hidden" value="✓">
 							<input name="_method" type="hidden" value="patch">

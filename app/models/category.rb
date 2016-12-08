@@ -1,3 +1,3 @@
 class Category < ActiveRecord::Base
-  belongs_to :questionnaire_id
+  belongs_to :questionnaire
 end

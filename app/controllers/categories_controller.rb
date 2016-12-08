@@ -22,7 +22,7 @@ class CategoriesController < ApplicationController
 
   def update
     @category = Category.find(params[:id])
-    update_time(@category.questionnaire_id_id)
+    update_time(@category.questionnaire_id)
     if @category.update(category_params)
       redirect_to questionnaires_path
     else
@@ -32,7 +32,7 @@ class CategoriesController < ApplicationController
 
   def update_order
     @category = Category.find(params[:id])
-    update_time(@category.questionnaire_id_id)
+    update_time(@category.questionnaire_id)
     @order = params[:questOrder]
 
     v = 1
@@ -59,7 +59,7 @@ class CategoriesController < ApplicationController
     p('remove img!')
     @c_id = params[:cat_id]
     @cat = Category.find(@c_id)
-    update_time(@cat.questionnaire_id_id)
+    update_time(@cat.questionnaire_id)
     @cat.image = 0
     @cat.save
     render json: @c_id
@@ -69,7 +69,7 @@ class CategoriesController < ApplicationController
     p('remove audio!')
     @c_id = params[:cat_id]
     @cat = Category.find(@c_id)
-    update_time(@cat.questionnaire_id_id)
+    update_time(@cat.questionnaire_id)
     @cat.audio = 0
     @cat.save
     render json: @c_id
@@ -100,7 +100,7 @@ class CategoriesController < ApplicationController
         # save the img to the question
         @cat = Category.find(@c_id)
         @cat.image = @img_id
-        update_time(@cat.questionnaire_id_id)
+        update_time(@cat.questionnaire_id)
         @cat.save
         @media_res = MediaFile.find(@img_id)
         render json: @media_res
@@ -133,7 +133,7 @@ class CategoriesController < ApplicationController
         @audio_id = MediaFile.last.id
         @cat = Category.find(@c_id)
         @cat.audio = @audio_id
-        update_time(@cat.questionnaire_id_id)
+        update_time(@cat.questionnaire_id)
         @cat.save
         @media_res = MediaFile.find(@audio_id)
         render json: @media_res
@@ -150,7 +150,7 @@ class CategoriesController < ApplicationController
     @quest.category_id = params[:catid]
     @catid = params[:catid]
     @cat = Category.find(@catid)
-    update_time(@cat.questionnaire_id_id)
+    update_time(@cat.questionnaire_id)
     @resp_opts = ResponseOption.all
     # need to set order value as well
     @quest.order = if @last_quest
@@ -164,7 +164,7 @@ class CategoriesController < ApplicationController
     response = {
       'quest' => @quest.to_json,
       'catid' => @catid,
-      'questid' => Category.find(params[:catid]).questionnaire_id_id,
+      'questid' => Category.find(params[:catid]).questionnaire_id,
       'response_options' => @resp_opts
     }
 
@@ -184,7 +184,7 @@ class CategoriesController < ApplicationController
     result = []
     @categories.each do |cat|
       questionnaire = begin
-                        Questionnaire.find(cat.questionnaire_id_id)
+                        Questionnaire.find(cat.questionnaire_id)
                       rescue
                         nil
                       end
@@ -227,7 +227,7 @@ class CategoriesController < ApplicationController
     questions.each(&:destroy)
 
     @category = Category.find(id)
-    update_time(@category.questionnaire_id_id)
+    update_time(@category.questionnaire_id)
     @category.destroy
 
     # Send some feedback

@@ -59,7 +59,7 @@ module Api
       @id = params[:id]
       # The questionnaire
       @quest = Questionnaire.find(@id)
-      @categories = Category.where(questionnaire_id_id: @id).order(order: :asc)
+      @categories = Category.where(questionnaire_id: @id).order(order: :asc)
       @result_cats = ResultCategory.where(questionnaire_id: @id)
       # very important name is right yes no change or else break
       # trademark protected name yes

@@ -22,7 +22,8 @@ class QuestionnairesController < ApplicationController
         created_at: q.created_at }
     end
     # @questionnairesWithResults = Questionnaire.find()
-    render json: @questionnaire_data
+    # render json: @questionnaire_data
+    
   end
 
   def update_time(id)
@@ -56,7 +57,7 @@ class QuestionnairesController < ApplicationController
     @questionnaire = Questionnaire.find(params[:id])
     @questionnaire_id = @questionnaire.id
 
-    @categories = Category.where(questionnaire_id_id: @questionnaire.id).order(order: :asc)
+    @categories = Category.where(questionnaire_id: @questionnaire.id).order(order: :asc)
     @cat_ids = @categories.map(&:id)
 
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
@@ -72,7 +73,7 @@ class QuestionnairesController < ApplicationController
       'questionnaire' => @questionnaire,
       'questions' => @questions
     }
-    
+
     render json: @questionnaire_obj
     # format.html { render :show }
     # format.xml { render xml: @questionnaire }
@@ -91,7 +92,7 @@ class QuestionnairesController < ApplicationController
 
       @category.name = 'Alla'
       # @category.description = 'Alla frågor för enkäten ' + @questionnaire.name
-      @category.questionnaire_id_id = Integer(@questionnaire[:id])
+      @category.questionnaire_id = Integer(@questionnaire[:id])
       @category.order = 0
       @category.image = 'img/all.png'
 
@@ -111,7 +112,7 @@ class QuestionnairesController < ApplicationController
     user_right = user_right_to_questionnaire(session[:user_id], @questionnaire.id)
     redirect_to questionnaire_path(@questionnaire.id) unless user_right == :rw
 
-    @categories = Category.where(questionnaire_id_id: @questionnaire.id).order(order: :asc)
+    @categories = Category.where(questionnaire_id: @questionnaire.id).order(order: :asc)
     @cat_ids = @categories.map(&:id)
 
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
@@ -133,7 +134,7 @@ class QuestionnairesController < ApplicationController
   def destroy
     # puts "destroy!!"
     # # Questions that belongs to the category
-    categories = Category.where(questionnaire_id_id: params[:id])
+    categories = Category.where(questionnaire_id: params[:id])
     # puts categories
     categories.each do |cat|
       questions = Question.where(category_id: cat.id)
@@ -149,7 +150,7 @@ class QuestionnairesController < ApplicationController
   def clone
     @qid = params[:id]
     @questionnaire = Questionnaire.find(@qid)
-    @categories = Category.where(questionnaire_id_id: @qid).order(order: :asc)
+    @categories = Category.where(questionnaire_id: @qid).order(order: :asc)
 
     # Make sure user is allowed to create/copy questionnaires
     @curr_user = User.find(session[:user_id]) if authenticate_user
@@ -163,7 +164,7 @@ class QuestionnairesController < ApplicationController
       @categories.each do |c|
         # Copy category
         new_cat = c.dup
-        new_cat.questionnaire_id_id = @new_questionnaire.id
+        new_cat.questionnaire_id = @new_questionnaire.id
         new_cat.save
 
         questions = Question.where(category_id: c.id)
@@ -189,7 +190,7 @@ class QuestionnairesController < ApplicationController
     @category = Category.new
     @category.order = last_category_order_for_id(@qid)
     @category.name = 'Ny kategori'
-    @category.questionnaire_id_id = @qid
+    @category.questionnaire_id = @qid
 
     @category.save
 
@@ -218,7 +219,7 @@ class QuestionnairesController < ApplicationController
     # Copy category
     @category = c.dup
     @category.order = last_category_order_for_id(questionnaire_id)
-    @category.questionnaire_id_id = questionnaire_id
+    @category.questionnaire_id = questionnaire_id
     @category.save
 
     questions = Question.where(category_id: c.id)
@@ -258,7 +259,7 @@ class QuestionnairesController < ApplicationController
     response_option_id = params[:responseOption]
     update_time(params[:id])
     @questionnaire = Questionnaire.find(params[:id])
-    @categories = Category.where(questionnaire_id_id: params[:id]).order(order: :asc)
+    @categories = Category.where(questionnaire_id: params[:id]).order(order: :asc)
     @cat_ids = []
     @categories.each do |c|
       @cat_ids.push c.id
@@ -305,7 +306,7 @@ class QuestionnairesController < ApplicationController
   end
 
   def last_category_order_for_id(id)
-    last_order_category = Category.where(questionnaire_id_id: id).order(order: :desc).first
+    last_order_category = Category.where(questionnaire_id: id).order(order: :desc).first
     last_order_category ? last_order_category.order + 1 : 1
   end
 

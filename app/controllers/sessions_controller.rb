@@ -18,8 +18,8 @@ class SessionsController < ApplicationController
       session[:user_id] = authorized_user.id
       flash[:notice] = "Välkommen åter, #{authorized_user.username}."
       # redirect_to(:action => 'home')
-      # redirect_to(controller: 'questionnaires', action: 'index')
-      render json: authorized_user
+      redirect_to(controller: 'questionnaires', action: 'index')
+      #render json: authorized_user
 
     else
       flash[:notice] = 'Felaktigt användarnamn eller lösenord.'
