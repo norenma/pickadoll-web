@@ -222,6 +222,8 @@ class QuestionsController < ApplicationController
 
     @questions = Question.all
     user_id = session[:user_id]
+    puts("ID")
+    puts(user_id)
 
     result = []
     @questions.each do |quest|

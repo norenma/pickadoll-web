@@ -13,7 +13,7 @@ module Api
       @login_password = params[:password]
 
       authorized_user = User.authenticate(@username, @login_password)
-
+      puts[@username, @login_password]
       if authorized_user
         @info =	User.find(authorized_user.id)
         render json: @info

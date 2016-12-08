@@ -22,13 +22,14 @@ class QuestionnairesController < ApplicationController
         created_at: q.created_at }
     end
     # @questionnairesWithResults = Questionnaire.find()
+    render json: @questionnaire_data
   end
 
   def update_time(id)
     @questionnaire = Questionnaire.find(id)
     @questionnaire.update(updated_at: DateTime.now)
     @questionnaire.save
-    puts("updated!")
+    puts('updated!')
     puts(@questionnaire)
   end
 
@@ -59,19 +60,22 @@ class QuestionnairesController < ApplicationController
     @cat_ids = @categories.map(&:id)
 
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
-
     @response_options = ResponseOption.visible_response_options(session[:user_id])
-    @result_categorys = ResultCategory.all 
+    @result_categorys = ResultCategory.all
     if authenticate_user
       @curr_user = User.find(session[:user_id])
       @username = @curr_user.username
     end
 
-    respond_to do |format|
-      format.html { render :show }
-      format.json { render json: @questionnaire }
-      format.xml { render xml: @questionnaire }
-    end
+    @questionnaire_obj = {
+      'categories' => @categories,
+      'questionnaire' => @questionnaire,
+      'questions' => @questions
+    }
+    
+    render json: @questionnaire_obj
+    # format.html { render :show }
+    # format.xml { render xml: @questionnaire }
   end
 
   def create
@@ -113,7 +117,7 @@ class QuestionnairesController < ApplicationController
     @questions = Question.where(category_id: @cat_ids).order(order: :asc)
 
     @response_options = ResponseOption.visible_response_options(session[:user_id])
-    @result_categorys = ResultCategory.all 
+    @result_categorys = ResultCategory.all
 
     # if you want to create a new response option
     @response_option = ResponseOption.new
@@ -127,10 +131,10 @@ class QuestionnairesController < ApplicationController
   end
 
   def destroy
-    #puts "destroy!!"
+    # puts "destroy!!"
     # # Questions that belongs to the category
     categories = Category.where(questionnaire_id_id: params[:id])
-    #puts categories
+    # puts categories
     categories.each do |cat|
       questions = Question.where(category_id: cat.id)
       questions.each(&:destroy)

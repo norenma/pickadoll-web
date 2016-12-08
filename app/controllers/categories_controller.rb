@@ -7,11 +7,16 @@ class CategoriesController < ApplicationController
     @questid = params[:questionnaire_id]
   end
 
+  def cor
+    # blank section for CORR
+    render text: ''
+  end
+
   def update_time(id)
     @questionnaire = Questionnaire.find(id)
     @questionnaire.update(updated_at: DateTime.now)
     @questionnaire.save
-    puts("updated!")
+    puts('updated!')
     puts(@questionnaire)
   end
 
@@ -70,12 +75,9 @@ class CategoriesController < ApplicationController
     render json: @c_id
   end
 
-
   def upload_image
     @img_file = params[:category_image]
     @c_id = params[:category][:id]
-
-
 
     if !@img_file.nil?
       File.open(Rails.root.join('public', 'uploads',
@@ -151,11 +153,11 @@ class CategoriesController < ApplicationController
     update_time(@cat.questionnaire_id_id)
     @resp_opts = ResponseOption.all
     # need to set order value as well
-    if @last_quest
-      @quest.order = @last_quest.order + 1
-    else
-      @quest.order = 1
-    end
+    @quest.order = if @last_quest
+                     @last_quest.order + 1
+                   else
+                     1
+                   end
 
     @quest.save
 
@@ -181,7 +183,11 @@ class CategoriesController < ApplicationController
 
     result = []
     @categories.each do |cat|
-      questionnaire = Questionnaire.find(cat.questionnaire_id_id) rescue nil
+      questionnaire = begin
+                        Questionnaire.find(cat.questionnaire_id_id)
+                      rescue
+                        nil
+                      end
 
       # Ignore this category if it doesn't belong to a questionnaire
       next unless questionnaire

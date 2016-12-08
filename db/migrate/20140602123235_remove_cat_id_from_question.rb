@@ -1,5 +1,5 @@
 class RemoveCatIdFromQuestion < ActiveRecord::Migration
   def change
-  	remove_reference :question, :cat_id 
+  	remove_reference :questions, :cat_id 
   end
 end

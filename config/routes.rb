@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   resources :answers
 
   resources :response_options
-
+  match '*all' => 'categories#cor', via: :options
   # allowing for ajax posts to update the order
   # quite a long one innit
   post 'questionnaires/:id/categories/:id/updateOrder', to: 'categories#update_order'
@@ -25,6 +25,9 @@ Rails.application.routes.draw do
   post 'questions/upload_audio'
   post 'questions/remove_image'
   post 'questions/remove_audio'
+
+  # Route to get a questionnaire
+  get 'questionnaire/:id', to: 'questionnaires#show'
 
   # Route for the category media upload
   post 'categories/upload_image'
